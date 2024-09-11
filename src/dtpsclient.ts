@@ -1,13 +1,11 @@
 import { Api, HttpClient } from "./dtpsApi";
 import crypto from "crypto";
 
-
 interface DTPSInitConfig {
     url: string
     apiKey: string,
     apiSecret:string
 }
-
 
 const generateSignature = (secret: string, path: string, data: any) => {
     const signature = crypto.createHmac("sha256", secret);
@@ -22,10 +20,7 @@ const generateSignature = (secret: string, path: string, data: any) => {
 
 export class DTPSClient {
 
-
     init(config:DTPSInitConfig) {
-       
-        
         const httpClient = this.generateHTTPClient(config)
         const api = new Api(httpClient);
         return api

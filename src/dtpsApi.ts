@@ -66,13 +66,13 @@ export interface ModelsCardPurchaseApplication {
 }
 
 export enum ModelsCardPurchaseApplicationStatus {
+  DOCUMENT_NOT_INITIALIZED = "NOT_INITIALIZED",
+  DOCUMENT_SUCCESS = "SUCCESS",
+  DOCUMENT_FAILED = "FAILED",
   CPAS_NOT_INITIALIZED = "NOT_INITIALIZED",
   CPAS_PENDING = "PENDING",
   CPAS_SUCCESS = "SUCCESS",
   CPAS_FAILED = "FAILED",
-  DOCUMENT_NOT_INITIALIZED = "NOT_INITIALIZED",
-  DOCUMENT_SUCCESS = "SUCCESS",
-  DOCUMENT_FAILED = "FAILED",
   UAIS_SUCCESS = "SUCCESS",
   UAIS_FAILED = "FAILED",
 }
@@ -81,7 +81,6 @@ export interface ModelsCardTopupApplication {
   createdAt?: string;
   failedRemarks?: string;
   fee?: string;
-  feeDetails?: string;
   finalAmount?: string;
   id?: string;
   processedById?: string;
@@ -379,12 +378,12 @@ export class Api<SecurityDataType extends unknown> {
      * @description Call this api after 1. /user/create  and 2. /user/documents/upload ( after uploading all required docs )
      *
      * @tags card application
-     * @name ApplicationApplyCreate
+     * @name ApplyCard
      * @summary Apply Card
      * @request POST:/card/application/apply
      * @secure
      */
-    applicationApplyCreate: (card: CardcontrollerIssueCardInputDTO, params: RequestParams = {}) =>
+    applyCard: (card: CardcontrollerIssueCardInputDTO, params: RequestParams = {}) =>
       this.http.request<ModelsCardPurchaseApplication, any>({
         path: `/card/application/apply`,
         method: "POST",
@@ -399,12 +398,12 @@ export class Api<SecurityDataType extends unknown> {
      * @description Get All Card Applications. status 0=NOT_INITIALIZED 1=PENDING 2=SUCCESS 3=FAILED
      *
      * @tags card application
-     * @name ApplicationListList
+     * @name GetAllCardApplications
      * @summary Get All Card Applications
      * @request GET:/card/application/list
      * @secure
      */
-    applicationListList: (params: RequestParams = {}) =>
+    getAllCardApplications: (params: RequestParams = {}) =>
       this.http.request<ModelsCardPurchaseApplication[], any>({
         path: `/card/application/list`,
         method: "GET",
@@ -418,12 +417,12 @@ export class Api<SecurityDataType extends unknown> {
      * @description Get Card Application. status 0=NOT_INITIALIZED 1=PENDING 2=SUCCESS 3=FAILED
      *
      * @tags card application
-     * @name ApplicationDetail
+     * @name GetCardApplication
      * @summary Get Card Application
      * @request GET:/card/application/{cardapplicationId}
      * @secure
      */
-    applicationDetail: (cardapplicationId: string, params: RequestParams = {}) =>
+    getCardApplication: (cardapplicationId: string, params: RequestParams = {}) =>
       this.http.request<ModelsCardPurchaseApplication, any>({
         path: `/card/application/${cardapplicationId}`,
         method: "GET",
@@ -437,12 +436,12 @@ export class Api<SecurityDataType extends unknown> {
      * @description Get Card Balance
      *
      * @tags card
-     * @name BalanceDetail
+     * @name GetCardBalance
      * @summary Get Card Balance
      * @request GET:/card/balance/{cardnumber}
      * @secure
      */
-    balanceDetail: (cardnumber: string, params: RequestParams = {}) =>
+    getCardBalance: (cardnumber: string, params: RequestParams = {}) =>
       this.http.request<CardcontrollerBalanceResponse, any>({
         path: `/card/balance/${cardnumber}`,
         method: "GET",
@@ -456,12 +455,12 @@ export class Api<SecurityDataType extends unknown> {
      * @description Get Available Cards
      *
      * @tags card
-     * @name ListList
+     * @name GetAvailableCards
      * @summary Get Available Cards
      * @request GET:/card/list
      * @secure
      */
-    listList: (params: RequestParams = {}) =>
+    getAvailableCards: (params: RequestParams = {}) =>
       this.http.request<ModelsPartnerCard[], any>({
         path: `/card/list`,
         method: "GET",
@@ -475,12 +474,12 @@ export class Api<SecurityDataType extends unknown> {
      * @description Apply Card Topup
      *
      * @tags card topup
-     * @name TopupApplyCreate
+     * @name ApplyCardTopup
      * @summary Apply Card Topup
      * @request POST:/card/topup/apply
      * @secure
      */
-    topupApplyCreate: (card: CardcontrollerApplyCardTopupInputDTO, params: RequestParams = {}) =>
+    applyCardTopup: (card: CardcontrollerApplyCardTopupInputDTO, params: RequestParams = {}) =>
       this.http.request<ModelsCardTopupApplication, any>({
         path: `/card/topup/apply`,
         method: "POST",
@@ -495,12 +494,12 @@ export class Api<SecurityDataType extends unknown> {
      * @description Get All Card Topup Applications
      *
      * @tags card topup
-     * @name TopupListList
+     * @name GetAllCardTopupApplications
      * @summary Get All Card Topup Applications
      * @request GET:/card/topup/list
      * @secure
      */
-    topupListList: (params: RequestParams = {}) =>
+    getAllCardTopupApplications: (params: RequestParams = {}) =>
       this.http.request<ModelsCardTopupApplication[], any>({
         path: `/card/topup/list`,
         method: "GET",
@@ -514,12 +513,12 @@ export class Api<SecurityDataType extends unknown> {
      * @description Get  Card Txn History
      *
      * @tags card
-     * @name TxnhistoryDetail
+     * @name GetCardTxnHistory
      * @summary Get  Card Txn History
      * @request GET:/card/txnhistory/{cardnumber}
      * @secure
      */
-    txnhistoryDetail: (cardnumber: string, params: RequestParams = {}) =>
+    getCardTxnHistory: (cardnumber: string, params: RequestParams = {}) =>
       this.http.request<CardcontrollerTxnResponse, any>({
         path: `/card/txnhistory/${cardnumber}`,
         method: "GET",
@@ -534,12 +533,12 @@ export class Api<SecurityDataType extends unknown> {
      * @description Add a new User
      *
      * @tags user
-     * @name CreateCreate
+     * @name CreateUser
      * @summary Create User
      * @request POST:/user/create
      * @secure
      */
-    createCreate: (user: UsercontrollerCreateUserInputDTO, params: RequestParams = {}) =>
+    createUser: (user: UsercontrollerCreateUserInputDTO, params: RequestParams = {}) =>
       this.http.request<ModelsUser, any>({
         path: `/user/create`,
         method: "POST",
@@ -554,12 +553,12 @@ export class Api<SecurityDataType extends unknown> {
      * @description possible docName values PASSPORT, SIGNATURE, SELFIE, SELFIE_WITH_PASSPORT
      *
      * @tags user
-     * @name DocumentUploadCreate
+     * @name UploadUserDocuments
      * @summary Upload User Documents
      * @request POST:/user/document/upload
      * @secure
      */
-    documentUploadCreate: (user: UsercontrollerUploadUserDocsInputDTO, params: RequestParams = {}) =>
+    uploadUserDocuments: (user: UsercontrollerUploadUserDocsInputDTO, params: RequestParams = {}) =>
       this.http.request<ResponsesOkResponse, any>({
         path: `/user/document/upload`,
         method: "POST",
@@ -574,12 +573,12 @@ export class Api<SecurityDataType extends unknown> {
      * @description Get All Users
      *
      * @tags user
-     * @name ListList
+     * @name GetAllUsers
      * @summary Get All Users
      * @request GET:/user/list
      * @secure
      */
-    listList: (params: RequestParams = {}) =>
+    getAllUsers: (params: RequestParams = {}) =>
       this.http.request<ModelsUser, any>({
         path: `/user/list`,
         method: "GET",
@@ -593,12 +592,12 @@ export class Api<SecurityDataType extends unknown> {
      * @description Get  Partner User
      *
      * @tags user
-     * @name UserDetail
+     * @name GetPartnerUser
      * @summary Get  Partner User
      * @request GET:/user/{userId}
      * @secure
      */
-    userDetail: (userId: string, params: RequestParams = {}) =>
+    getPartnerUser: (userId: string, params: RequestParams = {}) =>
       this.http.request<ModelsUser, any>({
         path: `/user/${userId}`,
         method: "GET",
