@@ -3,7 +3,7 @@
   "main": "dist/dtpsclient.js",
   "type": "module",
   "scripts": {
-    "generate:doc": "npx swagger-typescript-api -p https://dtpspartnerapi-development.fly.dev/docs/doc.json -n dtpsApi.ts --templates ./templates --axios --single-http-client",
+    "generate:doc": "npx swagger-typescript-api -p https://dtpspartnerapi-development.fly.dev/docs/doc.json -o src -n dtpsApi.ts --templates ./src/templates --axios --single-http-client",
     "build": "bun build src/dtpsclient.ts --outdir dist"
   },
   "devDependencies": {
