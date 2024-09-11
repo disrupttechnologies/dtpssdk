@@ -1,15 +1,54 @@
-# dtpssdk
 
-To install dependencies:
+# DTPS SDK  
+This SDK is a TypeScript-based wrapper for DTPS partner’s APIs.
 
-```bash
-bun install
-```
-
-To run:
+## Installing
 
 ```bash
-bun run index.ts
+npm install dtpssdk
+yarn add dtpssdk
 ```
 
-This project was created using `bun init` in bun v1.0.1. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+## Getting Started
+### Import
+
+```bash
+// ES5 example - 
+const { DTPSClient } = require("dtpssdk");
+```
+
+```bash
+// ES6+ example -
+import { DTPSClient } from "dtpssdk";
+```
+
+### Usage
+
+Initiate client with configuration (url, apiKey, apiSecret)
+
+```bash
+const dtpsClient = new DTPSClient().init({
+    url,
+    apiKey,
+    apiSecret,
+})
+```
+
+Use client instance and call functions based on module
+
+```bash
+// async/await
+
+try {
+  const cards = await dtpsClient.<module>.<function_name>();
+  // process cards.
+} catch (error) {
+  // error handling.
+}
+```
+
+Available Module <module> -
+```bash
+card
+user 
+```
