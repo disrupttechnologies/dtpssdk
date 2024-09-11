@@ -4,11 +4,14 @@
   "type": "module",
   "scripts": {
     "generate:doc": "npx swagger-typescript-api -p https://dtpspartnerapi-development.fly.dev/docs/doc.json -o src -n dtpsApi.ts --templates ./src/templates --axios --single-http-client",
-    "build": "bun build src/dtpsclient.ts --outdir dist"
+    "build": "bun build src/dtpsclient.ts --outdir dist",
+    "prepare": "husky",
+    "test":"jest"
   },
   "devDependencies": {
     "@faker-js/faker": "^9.0.0",
     "bun-types": "latest",
+    "husky": "^9.1.5",
     "jest": "^29.7.0",
     "supertest": "^7.0.0"
   },

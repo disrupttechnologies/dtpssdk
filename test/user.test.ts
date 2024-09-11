@@ -25,7 +25,7 @@ describe('UserTesting (e2e)', () => {
     });
   
     it('getUsers', async() => {
-        const resp = await client.user.listList()
+        const resp = await client.user.getAllUsers()
 
         expect(resp.status).toBe(200)
         expect(true).toBe(Array.isArray(resp.data));
@@ -51,7 +51,7 @@ describe('UserTesting (e2e)', () => {
             village: faker.location.county(),
         }
         try {
-            const resp = await client.user.createCreate(payload);
+            const resp = await client.user.createUser(payload);
             expect(resp.status).toBe(200)
         } catch (err: any) {
             console.error(err)
@@ -62,7 +62,7 @@ describe('UserTesting (e2e)', () => {
 
 
     it('uploaddocuments', async () => {
-        const userListResp = await client.user.listList()
+        const userListResp = await client.user.getAllUsers()
         //@ts-ignore
         const oneUser = userListResp.data[0]
         const userId = oneUser.id
@@ -80,7 +80,7 @@ describe('UserTesting (e2e)', () => {
             documents
         }
 
-        const resp = await client.user.documentUploadCreate(payload);
+        const resp = await client.user.uploadUserDocuments(payload);
 
         expect(resp.status).toBe(200)
 
