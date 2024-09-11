@@ -2,9 +2,6 @@ import { Api, HttpClient } from "./dtpsApi";
 import crypto from "crypto";
 
 
-
-
-
 interface DTPSInitConfig {
     url: string
     apiKey: string,
@@ -21,7 +18,8 @@ const generateSignature = (secret: string, path: string, data: any) => {
     signature.update(message);
   
     return signature.digest("hex");
-  };
+};
+
 export class DTPSClient {
 
 
@@ -41,16 +39,15 @@ export class DTPSClient {
           httpClient.instance.interceptors.request.use(
             (config) => {
              
-              const finalData = config.data;
               //@ts-ignore
               const fullURL = config.baseURL + config.url;
+              if (config.data) {
+                config.data = JSON.stringify(config.data)
+              }
               const urlObj = new URL(fullURL);
-              const signature = generateSignature(apiSecret, urlObj.pathname, finalData);
-        
-              config.data = finalData;
+              const signature = generateSignature(apiSecret, urlObj.pathname, config.data);
               config.headers["X-Api-Key"] = apiKey
               config.headers["X-Api-Signature"] = signature;
-        
               return config;
             },
             (error) => {
@@ -61,7 +58,7 @@ export class DTPSClient {
         
           httpClient.instance.interceptors.response.use(
             (response) => {
-              return response.data;
+              return response
             },
               (error) => {
                   

@@ -13,9 +13,7 @@ const main = async () => {
         apiKey,
         apiSecret,
     })
-  const resp = await    dtpsClient.card.listList()
 
-    console.log("resp", resp);
 };
 
 main();
