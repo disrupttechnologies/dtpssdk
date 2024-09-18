@@ -8,6 +8,8 @@
     "prepare": "husky",
     "test":"jest"
   },
+  
+  "engineStrict": true,
   "devDependencies": {
     "@faker-js/faker": "^9.0.0",
     "bun-types": "latest",
