@@ -1,5 +1,6 @@
 import { Api, HttpClient } from "./dtpsApi";
-import crypto from "node:crypto";
+// @ts-ignore
+import crypto from 'crypto-browserify';
 
 interface DTPSInitConfig {
     url: string

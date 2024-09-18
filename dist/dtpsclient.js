@@ -1,5 +1,6 @@
 import { Api, HttpClient } from "./dtpsApi";
-import crypto from "node:crypto";
+// @ts-ignore
+import crypto from 'crypto-browserify';
 const generateSignature = (secret, path, data) => {
     const signature = crypto.createHmac("sha256", secret);
     let message = path;

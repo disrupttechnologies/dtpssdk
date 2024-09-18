@@ -17,6 +17,7 @@
     "downlevelIteration": true,
     "skipLibCheck": true,
     "jsx": "preserve",
+    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "allowJs": true,
