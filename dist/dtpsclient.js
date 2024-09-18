@@ -1,14 +1,12 @@
 import { Api, HttpClient } from "./dtpsApi";
-// @ts-ignore
-import crypto from 'crypto-browserify';
+import CryptoJS from "crypto-js";
 const generateSignature = (secret, path, data) => {
-    const signature = crypto.createHmac("sha256", secret);
     let message = path;
     if (data) {
         message += data;
     }
-    signature.update(message);
-    return signature.digest("hex");
+    const signature = CryptoJS.HmacSHA256(message, secret);
+    return CryptoJS.enc.Hex.stringify(signature);
 };
 export class DTPSClient {
     init(config) {
@@ -38,7 +36,7 @@ export class DTPSClient {
         httpClient.instance.interceptors.response.use((response) => {
             return response;
         }, (error) => {
-            console.log('err', error);
+            console.log("err", error);
             return Promise.reject(error?.response?.data || "");
         });
         return httpClient;
