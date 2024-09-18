@@ -1,5 +1,5 @@
 import { Api, HttpClient } from "./dtpsApi";
-import crypto from "crypto";
+import crypto from "node:crypto";
 const generateSignature = (secret, path, data) => {
     const signature = crypto.createHmac("sha256", secret);
     let message = path;
@@ -37,7 +37,8 @@ export class DTPSClient {
         httpClient.instance.interceptors.response.use((response) => {
             return response;
         }, (error) => {
-            return Promise.reject(error.response.data);
+            console.log('err', error);
+            return Promise.reject(error?.response?.data || "");
         });
         return httpClient;
     }

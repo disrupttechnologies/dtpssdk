@@ -1,5 +1,5 @@
 import { Api, HttpClient } from "./dtpsApi";
-import crypto from "crypto";
+import crypto from "node:crypto";
 
 interface DTPSInitConfig {
     url: string
@@ -56,8 +56,8 @@ export class DTPSClient {
               return response
             },
               (error) => {
-                  
-              return Promise.reject(error.response.data);
+              console.log('err', error)
+              return Promise.reject(error?.response?.data || "");
             }
           );
         

@@ -14,6 +14,9 @@ const main = async () => {
         apiSecret,
     })
 
+    let resp = await dtpsClient.card.getAvailableCards();
+    console.log(resp)
+
 };
 
 main();
