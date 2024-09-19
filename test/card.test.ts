@@ -12,7 +12,7 @@ describe('CardTesting', () => {
   
     beforeEach(async () => {
         const url = process.env.API_URL?process.env.API_URL:""
-        const apiKey =process.env.API_KEY?process.env.API_KEY:""
+        const apiKey = process.env.API_KEY?process.env.API_KEY:""
         const apiSecret = process.env.API_SECRET ? process.env.API_SECRET : ""
         const dtpsClient = new DTPSClient().init({
             url,
@@ -119,7 +119,10 @@ describe('CardTesting', () => {
     });
 
     describe("getCardBalance", () => {
-        // TODO - should get card balance
+        it('should return card balance', async() => {
+            let resp = await client.card.getCardBalance(process.env.CARD_NUMBER ? process.env.CARD_NUMBER : "1212121212121212");
+            expect(resp.status).toBe(200);
+        });
 
         it('should return validation error on invalid card number', async() => {
             try {
@@ -141,7 +144,10 @@ describe('CardTesting', () => {
         expect(cardTopupResp.status).toBe(200)
     });
 
-    // TODO - get card tx history
+    it('Get card transaction history', async() => {
+        const resp = await client.card.getCardTxnHistory(process.env.CARD_NUMBER ? process.env.CARD_NUMBER : "1212121212121212")
+        expect(resp.status).toBe(200)
+    });
 
     // TODO - API error - "ERROR: relation \"partner_cards\" does not exist (SQLSTATE 42P01)"
     // it('getAllCardTopupApplications', async() => {

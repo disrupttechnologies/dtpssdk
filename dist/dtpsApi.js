@@ -10,15 +10,15 @@
  */
 export var ModelsCardPurchaseApplicationStatus;
 (function (ModelsCardPurchaseApplicationStatus) {
-    ModelsCardPurchaseApplicationStatus["DOCUMENT_NOT_INITIALIZED"] = "NOT_INITIALIZED";
-    ModelsCardPurchaseApplicationStatus["DOCUMENT_SUCCESS"] = "SUCCESS";
-    ModelsCardPurchaseApplicationStatus["DOCUMENT_FAILED"] = "FAILED";
+    ModelsCardPurchaseApplicationStatus["UAIS_SUCCESS"] = "SUCCESS";
+    ModelsCardPurchaseApplicationStatus["UAIS_FAILED"] = "FAILED";
     ModelsCardPurchaseApplicationStatus["CPAS_NOT_INITIALIZED"] = "NOT_INITIALIZED";
     ModelsCardPurchaseApplicationStatus["CPAS_PENDING"] = "PENDING";
     ModelsCardPurchaseApplicationStatus["CPAS_SUCCESS"] = "SUCCESS";
     ModelsCardPurchaseApplicationStatus["CPAS_FAILED"] = "FAILED";
-    ModelsCardPurchaseApplicationStatus["UAIS_SUCCESS"] = "SUCCESS";
-    ModelsCardPurchaseApplicationStatus["UAIS_FAILED"] = "FAILED";
+    ModelsCardPurchaseApplicationStatus["DOCUMENT_NOT_INITIALIZED"] = "NOT_INITIALIZED";
+    ModelsCardPurchaseApplicationStatus["DOCUMENT_SUCCESS"] = "SUCCESS";
+    ModelsCardPurchaseApplicationStatus["DOCUMENT_FAILED"] = "FAILED";
 })(ModelsCardPurchaseApplicationStatus || (ModelsCardPurchaseApplicationStatus = {}));
 export var ModelsCardTopupStatus;
 (function (ModelsCardTopupStatus) {
