@@ -10,10 +10,11 @@
   "version": "0.0.1",
   "scripts": {
     "generate:doc": "npx swagger-typescript-api -p https://dtpspartnerapi-development.fly.dev/docs/doc.json -o src -n dtpsApi.ts --templates ./src/templates --axios --single-http-client",
-    "build": "tsc",
+    "build": "npx tsc",
     "prepare": "husky",
     "test": "jest"
   },
+  "engineStrict": true,
   "devDependencies": {
     "@faker-js/faker": "^9.0.0",
     "@types/crypto-js": "^4.2.2",

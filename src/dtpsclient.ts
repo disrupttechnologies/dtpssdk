@@ -56,7 +56,6 @@ export class DTPSClient {
         return response
       },
       (error) => {
-        console.log("err", error)
         return Promise.reject(error?.response?.data || "")
       }
     )
