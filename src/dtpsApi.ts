@@ -66,6 +66,8 @@ export interface ModelsCardPurchaseApplication {
 }
 
 export enum ModelsCardPurchaseApplicationStatus {
+  UAIS_SUCCESS = "SUCCESS",
+  UAIS_FAILED = "FAILED",
   DOCUMENT_NOT_INITIALIZED = "NOT_INITIALIZED",
   DOCUMENT_SUCCESS = "SUCCESS",
   DOCUMENT_FAILED = "FAILED",
@@ -73,8 +75,6 @@ export enum ModelsCardPurchaseApplicationStatus {
   CPAS_PENDING = "PENDING",
   CPAS_SUCCESS = "SUCCESS",
   CPAS_FAILED = "FAILED",
-  UAIS_SUCCESS = "SUCCESS",
-  UAIS_FAILED = "FAILED",
 }
 
 export interface ModelsCardTopupApplication {
@@ -101,6 +101,7 @@ export interface ModelsPartner {
   createdAt?: string;
   createdByID?: string;
   email?: string;
+  floatBalMinThreshold?: string;
   floatBalance?: string;
   id?: string;
   is2FAEnabled?: boolean;
