@@ -5,8 +5,8 @@ This SDK is a TypeScript-based wrapper for DTPS partner’s APIs.
 ## Installing
 
 ```bash
-npm install @dtps/dtpssdk
-yarn add @dtps/dtpssdk
+yarn add "https://github.com/prv-card/dtpssdk"
+npm install "https://github.com/prv-card/dtpssdk"
 ```
 
 ## Getting Started
