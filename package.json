@@ -1,12 +1,13 @@
 {
   "name": "@dtps/dtpssdk",
   "main": "dist/dtpsclient.js",
-  "types": "dist/dtpsclient.d.ts",
-  "exports": {
-    ".": "./dist/dtpsclient.js",
-    "./types": "./dist/dtpsclient.d.ts"
-  },
+    "types": "dist/dtpsclient.d.ts",
+    "exports": {
+      ".": "./dist/dtpsclient.js",
+      "./types": "./dist/dtpsclient.d.ts"
+    },
   "type": "module",
+  "version": "0.0.1",
   "scripts": {
     "generate:doc": "npx swagger-typescript-api -p https://dtpspartnerapi-development.fly.dev/docs/doc.json -o src -n dtpsApi.ts --templates ./src/templates --axios --single-http-client",
     "build": "tsc",
