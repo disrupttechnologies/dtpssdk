@@ -149,15 +149,9 @@ describe('CardTesting', () => {
         expect(resp.status).toBe(200)
     });
 
-    // TODO - API error - "ERROR: relation \"partner_cards\" does not exist (SQLSTATE 42P01)"
-    // it('getAllCardTopupApplications', async() => {
-    //     try {
-    //         const resp = await client.card.getAllCardTopupApplications()
-    //     console.log(resp)
-    //         expect(resp.status).toBe(200)
-    //         expect(true).toBe(Array.isArray(resp.data));
-    //     }catch(err) {
-    //         console.log(err)
-    //     }
-    // });
+    it('getAllCardTopupApplications', async() => {
+        const resp = await client.card.getAllCardTopupApplications()
+        expect(resp.status).toBe(200)
+        expect(true).toBe(Array.isArray(resp.data));
+    });
   });
