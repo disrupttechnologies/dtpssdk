@@ -10,8 +10,6 @@
  */
 export var ModelsCardPurchaseApplicationStatus;
 (function (ModelsCardPurchaseApplicationStatus) {
-    ModelsCardPurchaseApplicationStatus["UAIS_SUCCESS"] = "SUCCESS";
-    ModelsCardPurchaseApplicationStatus["UAIS_FAILED"] = "FAILED";
     ModelsCardPurchaseApplicationStatus["CPAS_NOT_INITIALIZED"] = "NOT_INITIALIZED";
     ModelsCardPurchaseApplicationStatus["CPAS_PENDING"] = "PENDING";
     ModelsCardPurchaseApplicationStatus["CPAS_SUCCESS"] = "SUCCESS";
@@ -30,7 +28,16 @@ export var ModelsCardTopupStatus;
 export var ModelsUserAccountInfoStatus;
 (function (ModelsUserAccountInfoStatus) {
     ModelsUserAccountInfoStatus["UAIS_NOT_INITIALIZED"] = "NOT_INITIALIZED";
+    ModelsUserAccountInfoStatus["UAIS_SUCCESS"] = "SUCCESS";
+    ModelsUserAccountInfoStatus["UAIS_FAILED"] = "FAILED";
 })(ModelsUserAccountInfoStatus || (ModelsUserAccountInfoStatus = {}));
+export var ModelsUserCardActivationStatus;
+(function (ModelsUserCardActivationStatus) {
+    ModelsUserCardActivationStatus["UCAS_NOT_INITIALIZED"] = "NOT_INITIALIZED";
+    ModelsUserCardActivationStatus["UCAS_PENDING"] = "PENDING";
+    ModelsUserCardActivationStatus["UCAS_SUCCESS"] = "SUCCESS";
+    ModelsUserCardActivationStatus["UCAS_FAILED"] = "FAILED";
+})(ModelsUserCardActivationStatus || (ModelsUserCardActivationStatus = {}));
 import axios from "axios";
 export var ContentType;
 (function (ContentType) {
@@ -130,6 +137,24 @@ export class Api {
     }
     card = {
         /**
+         * @description Activate Card in SelfieImage post base64 image of user holding debit card and passport
+         *
+         * @tags card
+         * @name ActivateCard
+         * @summary Activate Card
+         * @request POST:/card/activate
+         * @secure
+         */
+        activateCard: (user, params = {}) => this.http.request({
+            path: `/card/activate`,
+            method: "POST",
+            body: user,
+            secure: true,
+            type: ContentType.Json,
+            format: "json",
+            ...params,
+        }),
+        /**
          * @description Call this api after 1. /user/create  and 2. /user/documents/upload ( after uploading all required docs )
          *
          * @tags card application
@@ -148,7 +173,7 @@ export class Api {
             ...params,
         }),
         /**
-         * @description Get All Card Applications. status 0=NOT_INITIALIZED 1=PENDING 2=SUCCESS 3=FAILED
+         * @description Get All Card Applications.
          *
          * @tags card application
          * @name GetAllCardApplications
@@ -156,16 +181,17 @@ export class Api {
          * @request GET:/card/application/list
          * @secure
          */
-        getAllCardApplications: (params = {}) => this.http.request({
+        getAllCardApplications: (query, params = {}) => this.http.request({
             path: `/card/application/list`,
             method: "GET",
+            query: query,
             secure: true,
             type: ContentType.Json,
             format: "json",
             ...params,
         }),
         /**
-         * @description Get Card Application. status 0=NOT_INITIALIZED 1=PENDING 2=SUCCESS 3=FAILED
+         * @description Get Card Application.
          *
          * @tags card application
          * @name GetCardApplication
@@ -242,9 +268,10 @@ export class Api {
          * @request GET:/card/topup/list
          * @secure
          */
-        getAllCardTopupApplications: (params = {}) => this.http.request({
+        getAllCardTopupApplications: (query, params = {}) => this.http.request({
             path: `/card/topup/list`,
             method: "GET",
+            query: query,
             secure: true,
             type: ContentType.Json,
             format: "json",
@@ -259,9 +286,10 @@ export class Api {
          * @request GET:/card/txnhistory/{cardnumber}
          * @secure
          */
-        getCardTxnHistory: (cardnumber, params = {}) => this.http.request({
+        getCardTxnHistory: (cardnumber, query, params = {}) => this.http.request({
             path: `/card/txnhistory/${cardnumber}`,
             method: "GET",
+            query: query,
             secure: true,
             type: ContentType.Json,
             format: "json",
@@ -314,9 +342,28 @@ export class Api {
          * @request GET:/user/list
          * @secure
          */
-        getAllUsers: (params = {}) => this.http.request({
+        getAllUsers: (query, params = {}) => this.http.request({
             path: `/user/list`,
             method: "GET",
+            query: query,
+            secure: true,
+            type: ContentType.Json,
+            format: "json",
+            ...params,
+        }),
+        /**
+         * @description Update User Details
+         *
+         * @tags user
+         * @name UpdateUserDetails
+         * @summary Update User Details
+         * @request POST:/user/update/{userId}
+         * @secure
+         */
+        updateUserDetails: (userId, user, params = {}) => this.http.request({
+            path: `/user/update/${userId}`,
+            method: "POST",
+            body: user,
             secure: true,
             type: ContentType.Json,
             format: "json",

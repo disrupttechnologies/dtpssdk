@@ -1,3 +1,7 @@
+export interface CardcontrollerActivateCardInputDTO {
+    selfieImg: string;
+    userCardId: string;
+}
 export interface CardcontrollerApplyCardTopupInputDTO {
     amount: number;
     userCardId: string;
@@ -26,10 +30,6 @@ export interface CardcontrollerTransaction {
     trn_ref_number?: string;
     user_id?: string;
 }
-export interface CardcontrollerTxnResponse {
-    data?: CardcontrollerTransaction[];
-    success?: string;
-}
 export interface ModelsCardPurchaseApplication {
     cardDeliveryAddress?: string;
     createdAt?: string;
@@ -37,20 +37,13 @@ export interface ModelsCardPurchaseApplication {
     handledById?: string;
     id?: string;
     pcid?: string;
-    /**
-     * Card     *PartnerCard                  `gorm:"foreignKey:PCID;references:ID;column:PartnerCard" json:"card"`
-     * UserCard *UserCard                     `gorm:"foreignKey:ApplicationID;references:ID;column:UserCards" json:"userCard"`
-     */
     remarks?: string;
-    /** User                *User                         `gorm:"foreignKey:UserID;references:ID;column:User" json:"user"` */
     status?: ModelsCardPurchaseApplicationStatus;
     ucid?: string;
     updatedAt?: string;
     userId?: string;
 }
 export declare enum ModelsCardPurchaseApplicationStatus {
-    UAIS_SUCCESS = "SUCCESS",
-    UAIS_FAILED = "FAILED",
     CPAS_NOT_INITIALIZED = "NOT_INITIALIZED",
     CPAS_PENDING = "PENDING",
     CPAS_SUCCESS = "SUCCESS",
@@ -69,6 +62,7 @@ export interface ModelsCardTopupApplication {
     requestedAmount?: string;
     status?: ModelsCardTopupStatus;
     updatedAt?: string;
+    userCard?: ModelsUserCard;
     userCardId?: string;
 }
 export declare enum ModelsCardTopupStatus {
@@ -88,30 +82,17 @@ export interface ModelsPartner {
     isEnabled?: boolean;
     name?: string;
     updatedAt?: string;
-    webhookSettings?: ModelsPartnerWebhookSetting[];
 }
 export interface ModelsPartnerCard {
     cardId?: string;
     createdAt?: string;
     id?: string;
     isEnabled?: boolean;
+    name?: string;
     partnerId?: string;
     price?: string;
     topupFeePercent?: string;
     updatedAt?: string;
-    whitelistedIps?: string;
-}
-export interface ModelsPartnerWebhookSetting {
-    algoType?: string;
-    createdAt?: string;
-    id?: string;
-    isEnabled?: boolean;
-    isResendOnFailureEnabled?: boolean;
-    partnerId?: string;
-    secretKey?: string;
-    targetUrl?: string;
-    updatedAt?: string;
-    webhookName?: string;
 }
 export interface ModelsUser {
     accountInfo?: ModelsUserAccountInfo;
@@ -138,13 +119,14 @@ export interface ModelsUserAccountInfo {
     userId?: string;
 }
 export declare enum ModelsUserAccountInfoStatus {
-    UAIS_NOT_INITIALIZED = "NOT_INITIALIZED"
+    UAIS_NOT_INITIALIZED = "NOT_INITIALIZED",
+    UAIS_SUCCESS = "SUCCESS",
+    UAIS_FAILED = "FAILED"
 }
 export interface ModelsUserCard {
     accountNumber?: string;
-    application?: ModelsCardPurchaseApplication;
     applicationId?: string;
-    card?: ModelsPartnerCard;
+    cardActivationDetails?: ModelsUserCardActivation;
     cardNumber?: string;
     createdAt?: string;
     embossName?: string;
@@ -154,6 +136,23 @@ export interface ModelsUserCard {
     updatedAt?: string;
     user?: ModelsUser;
     userId?: string;
+}
+export interface ModelsUserCardActivation {
+    createdAt?: string;
+    failedRemarks?: string;
+    handledByID?: string;
+    id?: string;
+    imgName?: string;
+    status?: ModelsUserCardActivationStatus;
+    updatedAt?: string;
+    userCard?: ModelsUserCard;
+    userCardId?: string;
+}
+export declare enum ModelsUserCardActivationStatus {
+    UCAS_NOT_INITIALIZED = "NOT_INITIALIZED",
+    UCAS_PENDING = "PENDING",
+    UCAS_SUCCESS = "SUCCESS",
+    UCAS_FAILED = "FAILED"
 }
 export interface ModelsUserDocument {
     createdAt?: string;
@@ -178,6 +177,8 @@ export interface UsercontrollerCreateUserInputDTO {
     last_name: string;
     mail: string;
     occupation: string;
+    passport_expiry_date: string;
+    passport_issue_date: string;
     passportnumber: string;
     place_of_birth: string;
     province: string;
@@ -188,6 +189,25 @@ export interface UsercontrollerCreateUserInputDTO {
 export interface UsercontrollerDocumentInputDto {
     base64data: string;
     docName: string;
+}
+export interface UsercontrollerUpdateUserInputDTO {
+    birth_country?: string;
+    district?: string;
+    dob?: string;
+    first_name?: string;
+    gender?: string;
+    isd_code?: number;
+    last_name?: string;
+    mail?: string;
+    occupation?: string;
+    passport_expiry_date?: string;
+    passport_issue_date?: string;
+    passportnumber?: string;
+    place_of_birth?: string;
+    province?: string;
+    telephone?: string;
+    title?: string;
+    village?: string;
 }
 export interface UsercontrollerUploadUserDocsInputDTO {
     documents: UsercontrollerDocumentInputDto[];
@@ -247,6 +267,16 @@ export declare class Api<SecurityDataType extends unknown> {
     constructor(http: HttpClient<SecurityDataType>);
     card: {
         /**
+         * @description Activate Card in SelfieImage post base64 image of user holding debit card and passport
+         *
+         * @tags card
+         * @name ActivateCard
+         * @summary Activate Card
+         * @request POST:/card/activate
+         * @secure
+         */
+        activateCard: (user: CardcontrollerActivateCardInputDTO, params?: RequestParams) => Promise<AxiosResponse<ResponsesOkResponse, any>>;
+        /**
          * @description Call this api after 1. /user/create  and 2. /user/documents/upload ( after uploading all required docs )
          *
          * @tags card application
@@ -257,7 +287,7 @@ export declare class Api<SecurityDataType extends unknown> {
          */
         applyCard: (card: CardcontrollerIssueCardInputDTO, params?: RequestParams) => Promise<AxiosResponse<ModelsCardPurchaseApplication, any>>;
         /**
-         * @description Get All Card Applications. status 0=NOT_INITIALIZED 1=PENDING 2=SUCCESS 3=FAILED
+         * @description Get All Card Applications.
          *
          * @tags card application
          * @name GetAllCardApplications
@@ -265,9 +295,14 @@ export declare class Api<SecurityDataType extends unknown> {
          * @request GET:/card/application/list
          * @secure
          */
-        getAllCardApplications: (params?: RequestParams) => Promise<AxiosResponse<ModelsCardPurchaseApplication[], any>>;
+        getAllCardApplications: (query?: {
+            /** page no for pagination */
+            page?: number;
+            /** limit no for pagination */
+            limit?: number;
+        }, params?: RequestParams) => Promise<AxiosResponse<ModelsCardPurchaseApplication[], any>>;
         /**
-         * @description Get Card Application. status 0=NOT_INITIALIZED 1=PENDING 2=SUCCESS 3=FAILED
+         * @description Get Card Application.
          *
          * @tags card application
          * @name GetCardApplication
@@ -315,7 +350,12 @@ export declare class Api<SecurityDataType extends unknown> {
          * @request GET:/card/topup/list
          * @secure
          */
-        getAllCardTopupApplications: (params?: RequestParams) => Promise<AxiosResponse<ModelsCardTopupApplication[], any>>;
+        getAllCardTopupApplications: (query?: {
+            /** page no for pagination */
+            page?: number;
+            /** limit no for pagination */
+            limit?: number;
+        }, params?: RequestParams) => Promise<AxiosResponse<ModelsCardTopupApplication[], any>>;
         /**
          * @description Get  Card Txn History
          *
@@ -325,7 +365,12 @@ export declare class Api<SecurityDataType extends unknown> {
          * @request GET:/card/txnhistory/{cardnumber}
          * @secure
          */
-        getCardTxnHistory: (cardnumber: string, params?: RequestParams) => Promise<AxiosResponse<CardcontrollerTxnResponse, any>>;
+        getCardTxnHistory: (cardnumber: string, query?: {
+            /** startdate in YYYY-MM-DD */
+            startDate?: string;
+            /** enddate in YYYY-MM-DD */
+            endDate?: string;
+        }, params?: RequestParams) => Promise<AxiosResponse<CardcontrollerTransaction[], any>>;
     };
     user: {
         /**
@@ -357,7 +402,22 @@ export declare class Api<SecurityDataType extends unknown> {
          * @request GET:/user/list
          * @secure
          */
-        getAllUsers: (params?: RequestParams) => Promise<AxiosResponse<ModelsUser, any>>;
+        getAllUsers: (query?: {
+            /** page no for pagination */
+            page?: number;
+            /** limit no for pagination */
+            limit?: number;
+        }, params?: RequestParams) => Promise<AxiosResponse<ModelsUser, any>>;
+        /**
+         * @description Update User Details
+         *
+         * @tags user
+         * @name UpdateUserDetails
+         * @summary Update User Details
+         * @request POST:/user/update/{userId}
+         * @secure
+         */
+        updateUserDetails: (userId: string, user: UsercontrollerUpdateUserInputDTO, params?: RequestParams) => Promise<AxiosResponse<ResponsesOkResponse, any>>;
         /**
          * @description Get  Partner User
          *

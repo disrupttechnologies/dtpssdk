@@ -9,6 +9,11 @@
  * ---------------------------------------------------------------
  */
 
+export interface CardcontrollerActivateCardInputDTO {
+  selfieImg: string;
+  userCardId: string;
+}
+
 export interface CardcontrollerApplyCardTopupInputDTO {
   amount: number;
   userCardId: string;
@@ -41,11 +46,6 @@ export interface CardcontrollerTransaction {
   user_id?: string;
 }
 
-export interface CardcontrollerTxnResponse {
-  data?: CardcontrollerTransaction[];
-  success?: string;
-}
-
 export interface ModelsCardPurchaseApplication {
   cardDeliveryAddress?: string;
   createdAt?: string;
@@ -53,12 +53,7 @@ export interface ModelsCardPurchaseApplication {
   handledById?: string;
   id?: string;
   pcid?: string;
-  /**
-   * Card     *PartnerCard                  `gorm:"foreignKey:PCID;references:ID;column:PartnerCard" json:"card"`
-   * UserCard *UserCard                     `gorm:"foreignKey:ApplicationID;references:ID;column:UserCards" json:"userCard"`
-   */
   remarks?: string;
-  /** User                *User                         `gorm:"foreignKey:UserID;references:ID;column:User" json:"user"` */
   status?: ModelsCardPurchaseApplicationStatus;
   ucid?: string;
   updatedAt?: string;
@@ -66,8 +61,6 @@ export interface ModelsCardPurchaseApplication {
 }
 
 export enum ModelsCardPurchaseApplicationStatus {
-  UAIS_SUCCESS = "SUCCESS",
-  UAIS_FAILED = "FAILED",
   CPAS_NOT_INITIALIZED = "NOT_INITIALIZED",
   CPAS_PENDING = "PENDING",
   CPAS_SUCCESS = "SUCCESS",
@@ -87,6 +80,7 @@ export interface ModelsCardTopupApplication {
   requestedAmount?: string;
   status?: ModelsCardTopupStatus;
   updatedAt?: string;
+  userCard?: ModelsUserCard;
   userCardId?: string;
 }
 
@@ -108,7 +102,6 @@ export interface ModelsPartner {
   isEnabled?: boolean;
   name?: string;
   updatedAt?: string;
-  webhookSettings?: ModelsPartnerWebhookSetting[];
 }
 
 export interface ModelsPartnerCard {
@@ -116,24 +109,11 @@ export interface ModelsPartnerCard {
   createdAt?: string;
   id?: string;
   isEnabled?: boolean;
+  name?: string;
   partnerId?: string;
   price?: string;
   topupFeePercent?: string;
   updatedAt?: string;
-  whitelistedIps?: string;
-}
-
-export interface ModelsPartnerWebhookSetting {
-  algoType?: string;
-  createdAt?: string;
-  id?: string;
-  isEnabled?: boolean;
-  isResendOnFailureEnabled?: boolean;
-  partnerId?: string;
-  secretKey?: string;
-  targetUrl?: string;
-  updatedAt?: string;
-  webhookName?: string;
 }
 
 export interface ModelsUser {
@@ -164,13 +144,14 @@ export interface ModelsUserAccountInfo {
 
 export enum ModelsUserAccountInfoStatus {
   UAIS_NOT_INITIALIZED = "NOT_INITIALIZED",
+  UAIS_SUCCESS = "SUCCESS",
+  UAIS_FAILED = "FAILED",
 }
 
 export interface ModelsUserCard {
   accountNumber?: string;
-  application?: ModelsCardPurchaseApplication;
   applicationId?: string;
-  card?: ModelsPartnerCard;
+  cardActivationDetails?: ModelsUserCardActivation;
   cardNumber?: string;
   createdAt?: string;
   embossName?: string;
@@ -180,6 +161,25 @@ export interface ModelsUserCard {
   updatedAt?: string;
   user?: ModelsUser;
   userId?: string;
+}
+
+export interface ModelsUserCardActivation {
+  createdAt?: string;
+  failedRemarks?: string;
+  handledByID?: string;
+  id?: string;
+  imgName?: string;
+  status?: ModelsUserCardActivationStatus;
+  updatedAt?: string;
+  userCard?: ModelsUserCard;
+  userCardId?: string;
+}
+
+export enum ModelsUserCardActivationStatus {
+  UCAS_NOT_INITIALIZED = "NOT_INITIALIZED",
+  UCAS_PENDING = "PENDING",
+  UCAS_SUCCESS = "SUCCESS",
+  UCAS_FAILED = "FAILED",
 }
 
 export interface ModelsUserDocument {
@@ -207,6 +207,8 @@ export interface UsercontrollerCreateUserInputDTO {
   last_name: string;
   mail: string;
   occupation: string;
+  passport_expiry_date: string;
+  passport_issue_date: string;
   passportnumber: string;
   place_of_birth: string;
   province: string;
@@ -218,6 +220,26 @@ export interface UsercontrollerCreateUserInputDTO {
 export interface UsercontrollerDocumentInputDto {
   base64data: string;
   docName: string;
+}
+
+export interface UsercontrollerUpdateUserInputDTO {
+  birth_country?: string;
+  district?: string;
+  dob?: string;
+  first_name?: string;
+  gender?: string;
+  isd_code?: number;
+  last_name?: string;
+  mail?: string;
+  occupation?: string;
+  passport_expiry_date?: string;
+  passport_issue_date?: string;
+  passportnumber?: string;
+  place_of_birth?: string;
+  province?: string;
+  telephone?: string;
+  title?: string;
+  village?: string;
 }
 
 export interface UsercontrollerUploadUserDocsInputDTO {
@@ -376,6 +398,26 @@ export class Api<SecurityDataType extends unknown> {
 
   card = {
     /**
+     * @description Activate Card in SelfieImage post base64 image of user holding debit card and passport
+     *
+     * @tags card
+     * @name ActivateCard
+     * @summary Activate Card
+     * @request POST:/card/activate
+     * @secure
+     */
+    activateCard: (user: CardcontrollerActivateCardInputDTO, params: RequestParams = {}) =>
+      this.http.request<ResponsesOkResponse, any>({
+        path: `/card/activate`,
+        method: "POST",
+        body: user,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
      * @description Call this api after 1. /user/create  and 2. /user/documents/upload ( after uploading all required docs )
      *
      * @tags card application
@@ -396,7 +438,7 @@ export class Api<SecurityDataType extends unknown> {
       }),
 
     /**
-     * @description Get All Card Applications. status 0=NOT_INITIALIZED 1=PENDING 2=SUCCESS 3=FAILED
+     * @description Get All Card Applications.
      *
      * @tags card application
      * @name GetAllCardApplications
@@ -404,10 +446,19 @@ export class Api<SecurityDataType extends unknown> {
      * @request GET:/card/application/list
      * @secure
      */
-    getAllCardApplications: (params: RequestParams = {}) =>
+    getAllCardApplications: (
+      query?: {
+        /** page no for pagination */
+        page?: number;
+        /** limit no for pagination */
+        limit?: number;
+      },
+      params: RequestParams = {},
+    ) =>
       this.http.request<ModelsCardPurchaseApplication[], any>({
         path: `/card/application/list`,
         method: "GET",
+        query: query,
         secure: true,
         type: ContentType.Json,
         format: "json",
@@ -415,7 +466,7 @@ export class Api<SecurityDataType extends unknown> {
       }),
 
     /**
-     * @description Get Card Application. status 0=NOT_INITIALIZED 1=PENDING 2=SUCCESS 3=FAILED
+     * @description Get Card Application.
      *
      * @tags card application
      * @name GetCardApplication
@@ -500,10 +551,19 @@ export class Api<SecurityDataType extends unknown> {
      * @request GET:/card/topup/list
      * @secure
      */
-    getAllCardTopupApplications: (params: RequestParams = {}) =>
+    getAllCardTopupApplications: (
+      query?: {
+        /** page no for pagination */
+        page?: number;
+        /** limit no for pagination */
+        limit?: number;
+      },
+      params: RequestParams = {},
+    ) =>
       this.http.request<ModelsCardTopupApplication[], any>({
         path: `/card/topup/list`,
         method: "GET",
+        query: query,
         secure: true,
         type: ContentType.Json,
         format: "json",
@@ -519,10 +579,20 @@ export class Api<SecurityDataType extends unknown> {
      * @request GET:/card/txnhistory/{cardnumber}
      * @secure
      */
-    getCardTxnHistory: (cardnumber: string, params: RequestParams = {}) =>
-      this.http.request<CardcontrollerTxnResponse, any>({
+    getCardTxnHistory: (
+      cardnumber: string,
+      query?: {
+        /** startdate in YYYY-MM-DD */
+        startDate?: string;
+        /** enddate in YYYY-MM-DD */
+        endDate?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<CardcontrollerTransaction[], any>({
         path: `/card/txnhistory/${cardnumber}`,
         method: "GET",
+        query: query,
         secure: true,
         type: ContentType.Json,
         format: "json",
@@ -579,10 +649,39 @@ export class Api<SecurityDataType extends unknown> {
      * @request GET:/user/list
      * @secure
      */
-    getAllUsers: (params: RequestParams = {}) =>
+    getAllUsers: (
+      query?: {
+        /** page no for pagination */
+        page?: number;
+        /** limit no for pagination */
+        limit?: number;
+      },
+      params: RequestParams = {},
+    ) =>
       this.http.request<ModelsUser, any>({
         path: `/user/list`,
         method: "GET",
+        query: query,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * @description Update User Details
+     *
+     * @tags user
+     * @name UpdateUserDetails
+     * @summary Update User Details
+     * @request POST:/user/update/{userId}
+     * @secure
+     */
+    updateUserDetails: (userId: string, user: UsercontrollerUpdateUserInputDTO, params: RequestParams = {}) =>
+      this.http.request<ResponsesOkResponse, any>({
+        path: `/user/update/${userId}`,
+        method: "POST",
+        body: user,
         secure: true,
         type: ContentType.Json,
         format: "json",

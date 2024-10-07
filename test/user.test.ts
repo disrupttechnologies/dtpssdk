@@ -40,6 +40,8 @@ describe('UserTesting (e2e)', () => {
             last_name: faker.person.lastName(),
             mail: faker.internet.email(),
             occupation: faker.person.jobTitle(),
+            passport_expiry_date: moment(faker.date.birthdate()).add(28, "years").format("DD/MM/YYYY"),
+            passport_issue_date: moment(faker.date.birthdate()).add(18, "years").format("DD/MM/YYYY"),
             passportnumber: faker.vehicle.vin(),
             place_of_birth: faker.location.country(),
             province: faker.location.county(),
