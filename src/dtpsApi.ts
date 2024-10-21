@@ -24,7 +24,9 @@ export interface CardcontrollerBalanceResponse {
 }
 
 export interface CardcontrollerIssueCardInputDTO {
+  accountNumber?: string;
   cardId: string;
+  cardNumber?: string;
   carddeliveryaddress: string;
   /** @maxLength 25 */
   embossname: string;
@@ -47,7 +49,9 @@ export interface CardcontrollerTransaction {
 }
 
 export interface ModelsCardPurchaseApplication {
+  accountNumber?: string;
   cardDeliveryAddress?: string;
+  cardNumber?: string;
   createdAt?: string;
   embossName?: string;
   handledById?: string;
