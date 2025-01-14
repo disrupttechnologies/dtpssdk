@@ -36,9 +36,14 @@ export class DTPSClient {
           config.data = JSON.stringify(config.data)
         }
         const urlObj = new URL(fullURL)
+        if (config.params) {
+          Object.keys(config.params).forEach((key) => {
+            urlObj.searchParams.append(key, config.params[key]);
+          });
+        }
         const signature = generateSignature(
           apiSecret,
-          urlObj.pathname,
+          urlObj.pathname + urlObj.search,
           config.data
         )
         config.headers["X-Api-Key"] = apiKey

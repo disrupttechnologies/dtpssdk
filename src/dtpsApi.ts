@@ -65,13 +65,13 @@ export interface ModelsCardPurchaseApplication {
 }
 
 export enum ModelsCardPurchaseApplicationStatus {
+  DOCUMENT_NOT_INITIALIZED = "NOT_INITIALIZED",
+  DOCUMENT_SUCCESS = "SUCCESS",
+  DOCUMENT_FAILED = "FAILED",
   CPAS_NOT_INITIALIZED = "NOT_INITIALIZED",
   CPAS_PENDING = "PENDING",
   CPAS_SUCCESS = "SUCCESS",
   CPAS_FAILED = "FAILED",
-  DOCUMENT_NOT_INITIALIZED = "NOT_INITIALIZED",
-  DOCUMENT_SUCCESS = "SUCCESS",
-  DOCUMENT_FAILED = "FAILED",
 }
 
 export interface ModelsCardTopupApplication {
@@ -109,7 +109,6 @@ export interface ModelsPartner {
 }
 
 export interface ModelsPartnerCard {
-  cardId?: string;
   createdAt?: string;
   id?: string;
   isEnabled?: boolean;
@@ -161,6 +160,7 @@ export interface ModelsUserCard {
   embossName?: string;
   id?: string;
   isEnabled?: boolean;
+  isMemberCard?: boolean;
   pcid?: string;
   updatedAt?: string;
   user?: ModelsUser;
@@ -489,6 +489,25 @@ export class Api<SecurityDataType extends unknown> {
       }),
 
     /**
+     * @description Get Card Balance By Card Id
+     *
+     * @tags card
+     * @name GetCardBalanceByCardId
+     * @summary Get Card Balance By Card Id
+     * @request GET:/card/balance/id/{cardId}
+     * @secure
+     */
+    getCardBalanceByCardId: (cardId: string, params: RequestParams = {}) =>
+      this.http.request<CardcontrollerBalanceResponse, any>({
+        path: `/card/balance/id/${cardId}`,
+        method: "GET",
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
      * @description Get Card Balance
      *
      * @tags card
@@ -575,6 +594,35 @@ export class Api<SecurityDataType extends unknown> {
       }),
 
     /**
+     * @description Get  Card Txn History By Card Id
+     *
+     * @tags card
+     * @name GetCardTxnHistoryByCardId
+     * @summary Get  Card Txn History By Card Id
+     * @request GET:/card/txnhistory/id/{cardId}
+     * @secure
+     */
+    getCardTxnHistoryByCardId: (
+      cardId: string,
+      query?: {
+        /** startdate in YYYY-MM-DD */
+        startDate?: string;
+        /** enddate in YYYY-MM-DD */
+        endDate?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<CardcontrollerTransaction[], any>({
+        path: `/card/txnhistory/id/${cardId}`,
+        method: "GET",
+        query: query,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
      * @description Get  Card Txn History
      *
      * @tags card
@@ -625,7 +673,7 @@ export class Api<SecurityDataType extends unknown> {
       }),
 
     /**
-     * @description possible docName values PASSPORT, SIGNATURE, SELFIE, SELFIE_WITH_PASSPORT
+     * @description possible docName values PASSPORT, SIGNATURE, SELFIE_WITH_PASSPORT
      *
      * @tags user
      * @name UploadUserDocuments

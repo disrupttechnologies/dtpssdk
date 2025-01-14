@@ -1,18 +1,18 @@
 import { describe, it, beforeEach, expect } from "bun:test";
 import { DTPSClient } from "../src/dtpsclient";
 import { Api, UsercontrollerCreateUserInputDTO, UsercontrollerDocumentInputDto, UsercontrollerUploadUserDocsInputDTO } from "../src/dtpsApi";
-import {  faker } from '@faker-js/faker';
+import { faker } from '@faker-js/faker';
 import moment from "moment";
 
 const mockImg = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAIAAADTED8xAAADMElEQVR4nOzVwQnAIBQFQYXff81RUkQCOyDj1YOPnbXWPmeTRef+/3O/OyBjzh3CD95BfqICMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMK0CMO0TAAD//2Anhf4QtqobAAAAAElFTkSuQmCC"
 
 describe('UserTesting (e2e)', () => {
     let client: Api<unknown>
-  
+
     beforeEach(async () => {
-        const url = process.env.API_URL?process.env.API_URL:""
-        const apiKey =process.env.API_KEY?process.env.API_KEY:""
-        const apiSecret = process.env.API_SECRET? process.env.API_SECRET:""
+        const url = process.env.API_URL ? process.env.API_URL : ""
+        const apiKey = process.env.API_KEY ? process.env.API_KEY : ""
+        const apiSecret = process.env.API_SECRET ? process.env.API_SECRET : ""
         const dtpsClient = new DTPSClient().init({
             url,
             apiKey,
@@ -20,16 +20,16 @@ describe('UserTesting (e2e)', () => {
         })
         client = dtpsClient;
     });
-  
-    it('getUsers', async() => {
+
+    it('getUsers', async () => {
         const resp = await client.user.getAllUsers()
-        
+
         expect(resp.status).toBe(200)
         expect(true).toBe(Array.isArray(resp.data));
     });
 
     describe("createUser", () => {
-        const genders = ["Male","Female","Other","None"]
+        const genders = ["Male", "Female", "Other", "None"]
         let payload: UsercontrollerCreateUserInputDTO = {
             birth_country: faker.location.countryCode(),
             district: faker.location.city(),
@@ -50,12 +50,12 @@ describe('UserTesting (e2e)', () => {
             village: faker.location.county(),
         }
 
-        it ('should create user', async () => {
+        it('should create user', async () => {
             const resp = await client.user.createUser(payload);
             expect(resp.status).toBe(200);
         })
 
-        it ('should return unique validation error on same email or passportnumber', async () => {
+        it('should return unique validation error on same email or passportnumber', async () => {
             try {
                 await client.user.createUser(payload);
             } catch (err: any) {
@@ -63,8 +63,8 @@ describe('UserTesting (e2e)', () => {
             }
         })
 
-        it ('should return validation error on invalid email', async () => {
-            let params = Object.assign({}, payload, {mail: ""})
+        it('should return validation error on invalid email', async () => {
+            let params = Object.assign({}, payload, { mail: "" })
             try {
                 await client.user.createUser(params);
             } catch (err: any) {
@@ -72,8 +72,8 @@ describe('UserTesting (e2e)', () => {
             }
         })
 
-        it ('should return validation error on invalid gender', async () => {
-            let params = Object.assign({}, payload, {gender: "NA"})
+        it('should return validation error on invalid gender', async () => {
+            let params = Object.assign({}, payload, { gender: "NA" })
             try {
                 await client.user.createUser(params);
             } catch (err: any) {
@@ -81,8 +81,8 @@ describe('UserTesting (e2e)', () => {
             }
         })
 
-        it ('should return validation error on invalid dob', async () => {
-            let params = Object.assign({}, payload, {dob: moment(faker.date.birthdate()).format("DD-MM-YYYY")})
+        it('should return validation error on invalid dob', async () => {
+            let params = Object.assign({}, payload, { dob: moment(faker.date.birthdate()).format("DD-MM-YYYY") })
             try {
                 await client.user.createUser(params);
             } catch (err: any) {
@@ -91,7 +91,7 @@ describe('UserTesting (e2e)', () => {
         })
     });
 
-    it('getPartnerUsers', async() => {
+    it('getPartnerUsers', async () => {
         const users = await client.user.getAllUsers();
         //@ts-ignore
         const userId = users.data[0].id;
@@ -109,10 +109,10 @@ describe('UserTesting (e2e)', () => {
             const userId = oneUser.id
 
             const documents: UsercontrollerDocumentInputDto[] = []
-            for (const docName of ["PASSPORT", "SIGNATURE", "SELFIE","SELFIE_WITH_PASSPORT"]) {
+            for (const docName of ["PASSPORT", "SIGNATURE", "SELFIE_WITH_PASSPORT"]) {
                 documents.push({
                     docName,
-                    base64data:mockImg
+                    base64data: mockImg
                 })
             }
             const payload: UsercontrollerUploadUserDocsInputDTO = {
@@ -134,10 +134,10 @@ describe('UserTesting (e2e)', () => {
                 const userId = oneUser.id
 
                 const documents: UsercontrollerDocumentInputDto[] = []
-                for (const docName of ["PASSPORT", "SIGNATURE", "SELFIE","WITH_PASSPORT"]) {
+                for (const docName of ["PASSPORT", "SIGNATURE", "WITH_PASSPORT"]) {
                     documents.push({
                         docName,
-                        base64data:mockImg
+                        base64data: mockImg
                     })
                 }
                 const payload: UsercontrollerUploadUserDocsInputDTO = {
@@ -146,9 +146,9 @@ describe('UserTesting (e2e)', () => {
                 }
 
                 await client.user.uploadUserDocuments(payload);
-            } catch(err: any) {
-                expect(err.error).toBe("invalid document name error. system only supports PASSPORT, SIGNATURE, SELFIE, SELFIE_WITH_PASSPORT")
+            } catch (err: any) {
+                expect(err.error).toBe("invalid document name error. system only supports PASSPORT, SIGNATURE, SELFIE_WITH_PASSPORT")
             }
         });
     });
-  });
+});

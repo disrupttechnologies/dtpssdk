@@ -48,13 +48,13 @@ export interface ModelsCardPurchaseApplication {
     userId?: string;
 }
 export declare enum ModelsCardPurchaseApplicationStatus {
+    DOCUMENT_NOT_INITIALIZED = "NOT_INITIALIZED",
+    DOCUMENT_SUCCESS = "SUCCESS",
+    DOCUMENT_FAILED = "FAILED",
     CPAS_NOT_INITIALIZED = "NOT_INITIALIZED",
     CPAS_PENDING = "PENDING",
     CPAS_SUCCESS = "SUCCESS",
-    CPAS_FAILED = "FAILED",
-    DOCUMENT_NOT_INITIALIZED = "NOT_INITIALIZED",
-    DOCUMENT_SUCCESS = "SUCCESS",
-    DOCUMENT_FAILED = "FAILED"
+    CPAS_FAILED = "FAILED"
 }
 export interface ModelsCardTopupApplication {
     createdAt?: string;
@@ -88,7 +88,6 @@ export interface ModelsPartner {
     updatedAt?: string;
 }
 export interface ModelsPartnerCard {
-    cardId?: string;
     createdAt?: string;
     id?: string;
     isEnabled?: boolean;
@@ -136,6 +135,7 @@ export interface ModelsUserCard {
     embossName?: string;
     id?: string;
     isEnabled?: boolean;
+    isMemberCard?: boolean;
     pcid?: string;
     updatedAt?: string;
     user?: ModelsUser;
@@ -316,6 +316,16 @@ export declare class Api<SecurityDataType extends unknown> {
          */
         getCardApplication: (cardapplicationId: string, params?: RequestParams) => Promise<AxiosResponse<ModelsCardPurchaseApplication, any>>;
         /**
+         * @description Get Card Balance By Card Id
+         *
+         * @tags card
+         * @name GetCardBalanceByCardId
+         * @summary Get Card Balance By Card Id
+         * @request GET:/card/balance/id/{cardId}
+         * @secure
+         */
+        getCardBalanceByCardId: (cardId: string, params?: RequestParams) => Promise<AxiosResponse<CardcontrollerBalanceResponse, any>>;
+        /**
          * @description Get Card Balance
          *
          * @tags card
@@ -361,6 +371,21 @@ export declare class Api<SecurityDataType extends unknown> {
             limit?: number;
         }, params?: RequestParams) => Promise<AxiosResponse<ModelsCardTopupApplication[], any>>;
         /**
+         * @description Get  Card Txn History By Card Id
+         *
+         * @tags card
+         * @name GetCardTxnHistoryByCardId
+         * @summary Get  Card Txn History By Card Id
+         * @request GET:/card/txnhistory/id/{cardId}
+         * @secure
+         */
+        getCardTxnHistoryByCardId: (cardId: string, query?: {
+            /** startdate in YYYY-MM-DD */
+            startDate?: string;
+            /** enddate in YYYY-MM-DD */
+            endDate?: string;
+        }, params?: RequestParams) => Promise<AxiosResponse<CardcontrollerTransaction[], any>>;
+        /**
          * @description Get  Card Txn History
          *
          * @tags card
@@ -388,7 +413,7 @@ export declare class Api<SecurityDataType extends unknown> {
          */
         createUser: (user: UsercontrollerCreateUserInputDTO, params?: RequestParams) => Promise<AxiosResponse<ModelsUser, any>>;
         /**
-         * @description possible docName values PASSPORT, SIGNATURE, SELFIE, SELFIE_WITH_PASSPORT
+         * @description possible docName values PASSPORT, SIGNATURE, SELFIE_WITH_PASSPORT
          *
          * @tags user
          * @name UploadUserDocuments

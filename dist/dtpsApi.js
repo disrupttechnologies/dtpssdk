@@ -10,13 +10,13 @@
  */
 export var ModelsCardPurchaseApplicationStatus;
 (function (ModelsCardPurchaseApplicationStatus) {
+    ModelsCardPurchaseApplicationStatus["DOCUMENT_NOT_INITIALIZED"] = "NOT_INITIALIZED";
+    ModelsCardPurchaseApplicationStatus["DOCUMENT_SUCCESS"] = "SUCCESS";
+    ModelsCardPurchaseApplicationStatus["DOCUMENT_FAILED"] = "FAILED";
     ModelsCardPurchaseApplicationStatus["CPAS_NOT_INITIALIZED"] = "NOT_INITIALIZED";
     ModelsCardPurchaseApplicationStatus["CPAS_PENDING"] = "PENDING";
     ModelsCardPurchaseApplicationStatus["CPAS_SUCCESS"] = "SUCCESS";
     ModelsCardPurchaseApplicationStatus["CPAS_FAILED"] = "FAILED";
-    ModelsCardPurchaseApplicationStatus["DOCUMENT_NOT_INITIALIZED"] = "NOT_INITIALIZED";
-    ModelsCardPurchaseApplicationStatus["DOCUMENT_SUCCESS"] = "SUCCESS";
-    ModelsCardPurchaseApplicationStatus["DOCUMENT_FAILED"] = "FAILED";
 })(ModelsCardPurchaseApplicationStatus || (ModelsCardPurchaseApplicationStatus = {}));
 export var ModelsCardTopupStatus;
 (function (ModelsCardTopupStatus) {
@@ -208,6 +208,23 @@ export class Api {
             ...params,
         }),
         /**
+         * @description Get Card Balance By Card Id
+         *
+         * @tags card
+         * @name GetCardBalanceByCardId
+         * @summary Get Card Balance By Card Id
+         * @request GET:/card/balance/id/{cardId}
+         * @secure
+         */
+        getCardBalanceByCardId: (cardId, params = {}) => this.http.request({
+            path: `/card/balance/id/${cardId}`,
+            method: "GET",
+            secure: true,
+            type: ContentType.Json,
+            format: "json",
+            ...params,
+        }),
+        /**
          * @description Get Card Balance
          *
          * @tags card
@@ -278,6 +295,24 @@ export class Api {
             ...params,
         }),
         /**
+         * @description Get  Card Txn History By Card Id
+         *
+         * @tags card
+         * @name GetCardTxnHistoryByCardId
+         * @summary Get  Card Txn History By Card Id
+         * @request GET:/card/txnhistory/id/{cardId}
+         * @secure
+         */
+        getCardTxnHistoryByCardId: (cardId, query, params = {}) => this.http.request({
+            path: `/card/txnhistory/id/${cardId}`,
+            method: "GET",
+            query: query,
+            secure: true,
+            type: ContentType.Json,
+            format: "json",
+            ...params,
+        }),
+        /**
          * @description Get  Card Txn History
          *
          * @tags card
@@ -316,7 +351,7 @@ export class Api {
             ...params,
         }),
         /**
-         * @description possible docName values PASSPORT, SIGNATURE, SELFIE, SELFIE_WITH_PASSPORT
+         * @description possible docName values PASSPORT, SIGNATURE, SELFIE_WITH_PASSPORT
          *
          * @tags user
          * @name UploadUserDocuments
