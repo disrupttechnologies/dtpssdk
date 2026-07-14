@@ -1,16 +1,16 @@
 {
   "name": "@dtps/dtpssdk",
   "main": "dist/dtpsclient.js",
-    "types": "dist/dtpsclient.d.ts",
-    "exports": {
-      ".": "./dist/dtpsclient.js",
-      "./types": "./dist/dtpsclient.d.ts"
-    },
+  "types": "dist/dtpsclient.d.ts",
+  "exports": {
+    ".": "./dist/dtpsclient.js",
+    "./types": "./dist/dtpsclient.d.ts"
+  },
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "generate:doc": "npx swagger-typescript-api generate -p https://partner-api.dtps.sandbox.backofficeportal.app/docs/doc.json -o src -n dtpsApi.ts --templates ./src/templates --axios --single-http-client",
     "build": "npx tsc",
+    "generate:doc": "npx swagger-typescript-api generate -p https://partner-api.dtps.sandbox.backofficeportal.app/docs/doc.json -o src -n dtpsApi.ts --templates ./src/templates --axios --single-http-client",
     "prepare": "husky",
     "test": "jest"
   },
