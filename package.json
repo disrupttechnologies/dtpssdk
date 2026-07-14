@@ -9,7 +9,7 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "generate:doc": "npx swagger-typescript-api -p https://dtpspartnerapi-development.fly.dev/docs/doc.json -o src -n dtpsApi.ts --templates ./src/templates --axios --single-http-client",
+    "generate:doc": "npx swagger-typescript-api generate -p https://partner-api.dtps.sandbox.backofficeportal.app/docs/doc.json -o src -n dtpsApi.ts --templates ./src/templates --axios --single-http-client",
     "build": "npx tsc",
     "prepare": "husky",
     "test": "jest"

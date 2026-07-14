@@ -1,18 +1,125 @@
-export interface CardcontrollerApplyCardTopupInputDTO {
+export declare enum ModelUserCardActivationStatus {
+    UCAS_NOT_INITIALIZED = "NOT_INITIALIZED",
+    UCAS_PENDING = "PENDING",
+    UCAS_SUCCESS = "SUCCESS",
+    UCAS_FAILED = "FAILED"
+}
+export declare enum ModelUserAccountInfoStatus {
+    UAIS_NOT_INITIALIZED = "NOT_INITIALIZED",
+    UAIS_SUCCESS = "SUCCESS",
+    UAIS_FAILED = "FAILED"
+}
+export declare enum ModelDocumentStatus {
+    DOCUMENT_NOT_INITIALIZED = "NOT_INITIALIZED",
+    DOCUMENT_SUCCESS = "SUCCESS",
+    DOCUMENT_FAILED = "FAILED"
+}
+export declare enum ModelCardTopupStatus {
+    CTS_NOT_INITIALIZED = "NOT_INITIALIZED",
+    CTS_PENDING = "PENDING",
+    CTS_SUCCESS = "SUCCESS",
+    CTS_FAILED = "FAILED"
+}
+export declare enum ModelCardPurchaseApplicationStatus {
+    CPAS_NOT_INITIALIZED = "NOT_INITIALIZED",
+    CPAS_PENDING = "PENDING",
+    CPAS_SUCCESS = "SUCCESS",
+    CPAS_FAILED = "FAILED",
+    CPAS_SHIPPED = "SHIPPED"
+}
+export interface DtoBlockUnblockCardInput {
+    cardId: string;
+}
+export interface DtoOkResponse {
+    message?: string;
+}
+export interface DtoPartnerApiActivateCardRequest {
+    name: string;
+    selfieImg: string;
+    userCardId: string;
+}
+export interface DtoPartnerApiApplyCardTopupRequest {
     amount: number;
     userCardId: string;
 }
-export interface CardcontrollerBalanceResponse {
+export interface DtoPartnerApiBalanceResponse {
     balance?: string;
 }
-export interface CardcontrollerIssueCardInputDTO {
+export interface DtoPartnerApiCreateUserRequest {
+    birth_country: string;
+    district: string;
+    dob: string;
+    first_name: string;
+    gender: string;
+    isd_code: number;
+    last_name: string;
+    mail: string;
+    occupation: string;
+    passport_expiry_date: string;
+    passport_issue_date: string;
+    passportnumber: string;
+    /** @maxLength 50 */
+    place_of_birth: string;
+    province: string;
+    /**
+     * @minLength 7
+     * @maxLength 15
+     */
+    telephone: string;
+    /** @maxLength 5 */
+    title: string;
+    village: string;
+}
+export interface DtoPartnerApiDocumentInputDTO {
+    base64data: string;
+    docName: string;
+}
+export interface DtoPartnerApiIssueCardRequest {
+    accountNumber?: string;
     cardId: string;
-    carddeliveryaddress: string;
-    /** @maxLength 25 */
+    cardNumber?: string;
+    /** @maxLength 21 */
     embossname: string;
+    userAddress?: string;
+    userId: string;
+    zipcode?: string;
+}
+export interface DtoPartnerApiReplacementCardActivateRequest {
+    name: string;
+    newCardNumber: string;
+    selfieImg: string;
+    userCardId: string;
+}
+export interface DtoPartnerApiUpdateUserRequest {
+    birth_country?: string;
+    district?: string;
+    dob?: string;
+    first_name?: string;
+    gender?: string;
+    isd_code?: number;
+    last_name?: string;
+    mail?: string;
+    occupation?: string;
+    passport_expiry_date?: string;
+    passport_issue_date?: string;
+    passportnumber?: string;
+    /** @maxLength 50 */
+    place_of_birth?: string;
+    province?: string;
+    telephone?: string;
+    /** @maxLength 5 */
+    title?: string;
+    village?: string;
+}
+export interface DtoPartnerApiUploadUserDocsRequest {
+    documents: DtoPartnerApiDocumentInputDTO[];
     userId: string;
 }
-export interface CardcontrollerTransaction {
+export interface DtoVCSetOnlineTxnInput {
+    cardId: string;
+    enable: boolean;
+}
+export interface JdbTransactionHistoryItem {
     acc_number?: string;
     auth_stat?: string;
     card_number?: string;
@@ -26,40 +133,24 @@ export interface CardcontrollerTransaction {
     trn_ref_number?: string;
     user_id?: string;
 }
-export interface CardcontrollerTxnResponse {
-    data?: CardcontrollerTransaction[];
-    success?: string;
-}
-export interface ModelsCardPurchaseApplication {
+export interface ModelCardPurchaseApplication {
     cardDeliveryAddress?: string;
     createdAt?: string;
     embossName?: string;
     handledById?: string;
     id?: string;
+    maccountNumber?: string;
+    mcardNumber?: string;
     pcid?: string;
-    /**
-     * Card     *PartnerCard                  `gorm:"foreignKey:PCID;references:ID;column:PartnerCard" json:"card"`
-     * UserCard *UserCard                     `gorm:"foreignKey:ApplicationID;references:ID;column:UserCards" json:"userCard"`
-     */
     remarks?: string;
-    /** User                *User                         `gorm:"foreignKey:UserID;references:ID;column:User" json:"user"` */
-    status?: ModelsCardPurchaseApplicationStatus;
+    shippingId?: string;
+    status?: ModelCardPurchaseApplicationStatus;
     ucid?: string;
     updatedAt?: string;
     userId?: string;
+    zipCode?: string;
 }
-export declare enum ModelsCardPurchaseApplicationStatus {
-    UAIS_SUCCESS = "SUCCESS",
-    UAIS_FAILED = "FAILED",
-    CPAS_NOT_INITIALIZED = "NOT_INITIALIZED",
-    CPAS_PENDING = "PENDING",
-    CPAS_SUCCESS = "SUCCESS",
-    CPAS_FAILED = "FAILED",
-    DOCUMENT_NOT_INITIALIZED = "NOT_INITIALIZED",
-    DOCUMENT_SUCCESS = "SUCCESS",
-    DOCUMENT_FAILED = "FAILED"
-}
-export interface ModelsCardTopupApplication {
+export interface ModelCardTopupApplication {
     createdAt?: string;
     failedRemarks?: string;
     fee?: string;
@@ -67,17 +158,12 @@ export interface ModelsCardTopupApplication {
     id?: string;
     processedById?: string;
     requestedAmount?: string;
-    status?: ModelsCardTopupStatus;
+    status?: ModelCardTopupStatus;
     updatedAt?: string;
+    userCard?: ModelUserCard;
     userCardId?: string;
 }
-export declare enum ModelsCardTopupStatus {
-    CTS_NOT_INITIALIZED = "NOT_INITIALIZED",
-    CTS_PENDING = "PENDING",
-    CTS_SUCCESS = "SUCCESS",
-    CTS_FAILED = "FAILED"
-}
-export interface ModelsPartner {
+export interface ModelPartner {
     createdAt?: string;
     createdByID?: string;
     email?: string;
@@ -88,110 +174,80 @@ export interface ModelsPartner {
     isEnabled?: boolean;
     name?: string;
     updatedAt?: string;
-    webhookSettings?: ModelsPartnerWebhookSetting[];
 }
-export interface ModelsPartnerCard {
-    cardId?: string;
+export interface ModelPartnerCard {
     createdAt?: string;
     id?: string;
     isEnabled?: boolean;
+    name?: string;
     partnerId?: string;
     price?: string;
     topupFeePercent?: string;
     updatedAt?: string;
-    whitelistedIps?: string;
 }
-export interface ModelsPartnerWebhookSetting {
-    algoType?: string;
-    createdAt?: string;
-    id?: string;
-    isEnabled?: boolean;
-    isResendOnFailureEnabled?: boolean;
-    partnerId?: string;
-    secretKey?: string;
-    targetUrl?: string;
-    updatedAt?: string;
-    webhookName?: string;
-}
-export interface ModelsUser {
-    accountInfo?: ModelsUserAccountInfo;
-    applications?: ModelsCardPurchaseApplication[];
-    cards?: ModelsUserCard[];
+export interface ModelUser {
+    accountInfo?: ModelUserAccountInfo;
+    applications?: ModelCardPurchaseApplication[];
+    cards?: ModelUserCard[];
     createdAt?: string;
     email?: string;
     fullName?: string;
     id?: string;
     isEnabled?: boolean;
-    partner?: ModelsPartner;
+    partner?: ModelPartner;
     partnerId?: string;
     passportNumber?: string;
     updatedAt?: string;
 }
-export interface ModelsUserAccountInfo {
+export interface ModelUserAccountInfo {
     createdAt?: string;
-    documents?: ModelsUserDocument[];
+    documents?: ModelUserDocument[];
     failedRemarks?: string;
     id?: string;
     metadata?: string;
-    status?: ModelsUserAccountInfoStatus;
+    status?: ModelUserAccountInfoStatus;
     updatedAt?: string;
     userId?: string;
 }
-export declare enum ModelsUserAccountInfoStatus {
-    UAIS_NOT_INITIALIZED = "NOT_INITIALIZED"
-}
-export interface ModelsUserCard {
+export interface ModelUserCard {
     accountNumber?: string;
-    application?: ModelsCardPurchaseApplication;
     applicationId?: string;
-    card?: ModelsPartnerCard;
+    card?: ModelPartnerCard;
+    cardActivationDetails?: ModelUserCardActivation;
     cardNumber?: string;
+    cardTopupApplication?: ModelCardTopupApplication[];
     createdAt?: string;
     embossName?: string;
     id?: string;
+    isActive?: boolean;
     isEnabled?: boolean;
+    isMemberCard?: boolean;
     pcid?: string;
     updatedAt?: string;
-    user?: ModelsUser;
+    user?: ModelUser;
     userId?: string;
 }
-export interface ModelsUserDocument {
+export interface ModelUserCardActivation {
     createdAt?: string;
-    documentStatus?: string;
+    failedRemarks?: string;
+    handledByID?: string;
+    id?: string;
+    imgName?: string;
+    name?: string;
+    status?: ModelUserCardActivationStatus;
+    updatedAt?: string;
+    userCard?: ModelUserCard;
+    userCardId?: string;
+}
+export interface ModelUserDocument {
+    createdAt?: string;
+    documentStatus?: ModelDocumentStatus;
     documentType?: string;
     failedRemarks?: string;
     fileName?: string;
     id?: string;
     updatedAt?: string;
     userInfoId?: string;
-}
-export interface ResponsesOkResponse {
-    message?: string;
-}
-export interface UsercontrollerCreateUserInputDTO {
-    birth_country: string;
-    district: string;
-    dob: string;
-    first_name: string;
-    gender: string;
-    isd_code: number;
-    last_name: string;
-    mail: string;
-    occupation: string;
-    passportnumber: string;
-    place_of_birth: string;
-    province: string;
-    telephone: string;
-    title: string;
-    village: string;
-}
-export interface UsercontrollerDocumentInputDto {
-    base64data: string;
-    docName: string;
-}
-export interface UsercontrollerUploadUserDocsInputDTO {
-    documents: UsercontrollerDocumentInputDto[];
-    userId: string;
 }
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, ResponseType } from "axios";
 export type QueryParamsType = Record<string | number, any>;
@@ -217,6 +273,7 @@ export interface ApiConfig<SecurityDataType = unknown> extends Omit<AxiosRequest
 }
 export declare enum ContentType {
     Json = "application/json",
+    JsonApi = "application/vnd.api+json",
     FormData = "multipart/form-data",
     UrlEncoded = "application/x-www-form-urlencoded",
     Text = "text/plain"
@@ -235,139 +292,202 @@ export declare class HttpClient<SecurityDataType = unknown> {
     request: <T = any, _E = any>({ secure, path, type, query, format, body, ...params }: FullRequestParams) => Promise<AxiosResponse<T>>;
 }
 /**
- * @title DTPS APIs
- * @version 1.0
- * @baseUrl /api/v1
+ * @title DTPS External Partner API
+ * @version 2.0
+ * @baseUrl /api/v2
  * @contact
  *
- * DTPS Apis.
+ * DTPS monolith API documentation. Each HTTP engine exposes its own filtered Swagger document.
  */
 export declare class Api<SecurityDataType extends unknown> {
     http: HttpClient<SecurityDataType>;
     constructor(http: HttpClient<SecurityDataType>);
     card: {
         /**
-         * @description Call this api after 1. /user/create  and 2. /user/documents/upload ( after uploading all required docs )
+         * @description Activate Card
          *
-         * @tags card application
+         * @tags engine-partner-api
+         * @name ActivateCard
+         * @summary Activate Card
+         * @request POST:/card/activate
+         */
+        activateCard: (card: DtoPartnerApiActivateCardRequest, params?: RequestParams) => Promise<AxiosResponse<DtoOkResponse, any>>;
+        /**
+         * @description Activate Replacement Card
+         *
+         * @tags engine-partner-api
+         * @name ActivateReplacementCard
+         * @summary Activate Replacement Card
+         * @request POST:/card/activate/replacement
+         */
+        activateReplacementCard: (card: DtoPartnerApiReplacementCardActivateRequest, params?: RequestParams) => Promise<AxiosResponse<DtoOkResponse, any>>;
+        /**
+         * @description Apply Card
+         *
+         * @tags engine-partner-api
          * @name ApplyCard
          * @summary Apply Card
          * @request POST:/card/application/apply
-         * @secure
          */
-        applyCard: (card: CardcontrollerIssueCardInputDTO, params?: RequestParams) => Promise<AxiosResponse<ModelsCardPurchaseApplication, any>>;
+        applyCard: (application: DtoPartnerApiIssueCardRequest, params?: RequestParams) => Promise<AxiosResponse<ModelCardPurchaseApplication, any>>;
         /**
-         * @description Get All Card Applications. status 0=NOT_INITIALIZED 1=PENDING 2=SUCCESS 3=FAILED
+         * @description Get All Partner Applications
          *
-         * @tags card application
-         * @name GetAllCardApplications
-         * @summary Get All Card Applications
+         * @tags engine-partner-api
+         * @name GetAllPartnerApplications
+         * @summary Get All Partner Applications
          * @request GET:/card/application/list
-         * @secure
          */
-        getAllCardApplications: (params?: RequestParams) => Promise<AxiosResponse<ModelsCardPurchaseApplication[], any>>;
+        getAllPartnerApplications: (params?: RequestParams) => Promise<AxiosResponse<ModelCardPurchaseApplication[], any>>;
         /**
-         * @description Get Card Application. status 0=NOT_INITIALIZED 1=PENDING 2=SUCCESS 3=FAILED
+         * @description Apply Card
          *
-         * @tags card application
-         * @name GetCardApplication
-         * @summary Get Card Application
+         * @tags engine-partner-api
+         * @name ApplyCard2
+         * @summary Apply Card
+         * @request POST:/card/application/noverify/apply
+         * @originalName applyCard
+         * @duplicate
+         */
+        applyCard2: (application: DtoPartnerApiIssueCardRequest, params?: RequestParams) => Promise<AxiosResponse<ModelCardPurchaseApplication, any>>;
+        /**
+         * @description Get Card Application By Id
+         *
+         * @tags engine-partner-api
+         * @name GetCardApplicationById
+         * @summary Get Card Application By Id
          * @request GET:/card/application/{cardapplicationId}
-         * @secure
          */
-        getCardApplication: (cardapplicationId: string, params?: RequestParams) => Promise<AxiosResponse<ModelsCardPurchaseApplication, any>>;
+        getCardApplicationById: (cardapplicationId: string, params?: RequestParams) => Promise<AxiosResponse<ModelCardPurchaseApplication, any>>;
         /**
-         * @description Get Card Balance
+         * @description Get Card Balance By Card Id
          *
-         * @tags card
-         * @name GetCardBalance
-         * @summary Get Card Balance
-         * @request GET:/card/balance/{cardnumber}
-         * @secure
+         * @tags engine-partner-api
+         * @name GetCardBalanceByCardId
+         * @summary Get Card Balance By Card Id
+         * @request GET:/card/balance/id/{cardId}
          */
-        getCardBalance: (cardnumber: string, params?: RequestParams) => Promise<AxiosResponse<CardcontrollerBalanceResponse, any>>;
+        getCardBalanceByCardId: (cardId: string, params?: RequestParams) => Promise<AxiosResponse<DtoPartnerApiBalanceResponse, any>>;
         /**
-         * @description Get Available Cards
+         * @description Block a virtual card
          *
-         * @tags card
-         * @name GetAvailableCards
-         * @summary Get Available Cards
+         * @tags engine-partner-api
+         * @name BlockVirtualCard
+         * @summary Block Virtual Card
+         * @request POST:/card/block
+         */
+        blockVirtualCard: (card: DtoBlockUnblockCardInput, params?: RequestParams) => Promise<AxiosResponse<DtoOkResponse, any>>;
+        /**
+         * @description Enable/Disable Online Transactions
+         *
+         * @tags engine-partner-api
+         * @name EnableDisableOnlineTransactions
+         * @summary Enable/Disable Online Transactions
+         * @request POST:/card/enable_online_txn
+         */
+        enableDisableOnlineTransactions: (card: DtoVCSetOnlineTxnInput, params?: RequestParams) => Promise<AxiosResponse<DtoOkResponse, any>>;
+        /**
+         * @description Get Cards
+         *
+         * @tags engine-partner-api
+         * @name GetCards
+         * @summary Get Cards
          * @request GET:/card/list
-         * @secure
          */
-        getAvailableCards: (params?: RequestParams) => Promise<AxiosResponse<ModelsPartnerCard[], any>>;
+        getCards: (params?: RequestParams) => Promise<AxiosResponse<ModelPartnerCard[], any>>;
         /**
          * @description Apply Card Topup
          *
-         * @tags card topup
+         * @tags engine-partner-api
          * @name ApplyCardTopup
          * @summary Apply Card Topup
          * @request POST:/card/topup/apply
-         * @secure
          */
-        applyCardTopup: (card: CardcontrollerApplyCardTopupInputDTO, params?: RequestParams) => Promise<AxiosResponse<ModelsCardTopupApplication, any>>;
+        applyCardTopup: (topup: DtoPartnerApiApplyCardTopupRequest, params?: RequestParams) => Promise<AxiosResponse<ModelCardTopupApplication, any>>;
         /**
-         * @description Get All Card Topup Applications
+         * @description Get All Partner Card Topup Applications
          *
-         * @tags card topup
-         * @name GetAllCardTopupApplications
-         * @summary Get All Card Topup Applications
+         * @tags engine-partner-api
+         * @name GetAllPartnerCardTopupApplications
+         * @summary Get All Partner Card Topup Applications
          * @request GET:/card/topup/list
-         * @secure
          */
-        getAllCardTopupApplications: (params?: RequestParams) => Promise<AxiosResponse<ModelsCardTopupApplication[], any>>;
+        getAllPartnerCardTopupApplications: (params?: RequestParams) => Promise<AxiosResponse<ModelCardTopupApplication[], any>>;
         /**
-         * @description Get  Card Txn History
+         * @description Get Card Txn History By Card Id
          *
-         * @tags card
-         * @name GetCardTxnHistory
-         * @summary Get  Card Txn History
-         * @request GET:/card/txnhistory/{cardnumber}
-         * @secure
+         * @tags engine-partner-api
+         * @name GetCardTxnHistoryByCardId
+         * @summary Get Card Txn History By Card Id
+         * @request GET:/card/txnhistory/id/{cardId}
          */
-        getCardTxnHistory: (cardnumber: string, params?: RequestParams) => Promise<AxiosResponse<CardcontrollerTxnResponse, any>>;
+        getCardTxnHistoryByCardId: (cardId: string, query?: {
+            /** Start Date */
+            startDate?: string;
+            /** End Date */
+            endDate?: string;
+        }, params?: RequestParams) => Promise<AxiosResponse<JdbTransactionHistoryItem[], any>>;
+        /**
+         * @description Unblock a virtual card
+         *
+         * @tags engine-partner-api
+         * @name UnblockVirtualCard
+         * @summary Unblock Virtual Card
+         * @request POST:/card/unblock
+         */
+        unblockVirtualCard: (card: DtoBlockUnblockCardInput, params?: RequestParams) => Promise<AxiosResponse<DtoOkResponse, any>>;
     };
     user: {
         /**
-         * @description Add a new User
+         * No description
          *
-         * @tags user
-         * @name CreateUser
-         * @summary Create User
+         * @tags engine-partner-api
+         * @name CreateAPartnerUser
+         * @summary Create a partner user
          * @request POST:/user/create
          * @secure
          */
-        createUser: (user: UsercontrollerCreateUserInputDTO, params?: RequestParams) => Promise<AxiosResponse<ModelsUser, any>>;
+        createAPartnerUser: (user: DtoPartnerApiCreateUserRequest, params?: RequestParams) => Promise<AxiosResponse<ModelUser, any>>;
         /**
-         * @description possible docName values PASSPORT, SIGNATURE, SELFIE, SELFIE_WITH_PASSPORT
+         * No description
          *
-         * @tags user
+         * @tags engine-partner-api
          * @name UploadUserDocuments
-         * @summary Upload User Documents
+         * @summary Upload user documents
          * @request POST:/user/document/upload
          * @secure
          */
-        uploadUserDocuments: (user: UsercontrollerUploadUserDocsInputDTO, params?: RequestParams) => Promise<AxiosResponse<ResponsesOkResponse, any>>;
+        uploadUserDocuments: (documents: DtoPartnerApiUploadUserDocsRequest, params?: RequestParams) => Promise<AxiosResponse<DtoOkResponse, any>>;
         /**
-         * @description Get All Users
+         * No description
          *
-         * @tags user
-         * @name GetAllUsers
-         * @summary Get All Users
+         * @tags engine-partner-api
+         * @name ListPartnerUsers
+         * @summary List partner users
          * @request GET:/user/list
          * @secure
          */
-        getAllUsers: (params?: RequestParams) => Promise<AxiosResponse<ModelsUser, any>>;
+        listPartnerUsers: (params?: RequestParams) => Promise<AxiosResponse<ModelUser[], any>>;
         /**
-         * @description Get  Partner User
+         * No description
          *
-         * @tags user
-         * @name GetPartnerUser
-         * @summary Get  Partner User
+         * @tags engine-partner-api
+         * @name UpdateAPartnerUser
+         * @summary Update a partner user
+         * @request POST:/user/update/{userId}
+         * @secure
+         */
+        updateAPartnerUser: (userId: string, user: DtoPartnerApiUpdateUserRequest, params?: RequestParams) => Promise<AxiosResponse<ModelUser, any>>;
+        /**
+         * No description
+         *
+         * @tags engine-partner-api
+         * @name GetAPartnerUserById
+         * @summary Get a partner user by ID
          * @request GET:/user/{userId}
          * @secure
          */
-        getPartnerUser: (userId: string, params?: RequestParams) => Promise<AxiosResponse<ModelsUser, any>>;
+        getAPartnerUserById: (userId: string, params?: RequestParams) => Promise<AxiosResponse<ModelUser, any>>;
     };
 }
 //# sourceMappingURL=dtpsApi.d.ts.map

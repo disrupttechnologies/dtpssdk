@@ -1,5 +1,6 @@
 /* eslint-disable */
 /* tslint:disable */
+// @ts-nocheck
 /*
  * ---------------------------------------------------------------
  * ## THIS FILE WAS GENERATED VIA SWAGGER-TYPESCRIPT-API        ##
@@ -8,33 +9,45 @@
  * ## SOURCE: https://github.com/acacode/swagger-typescript-api ##
  * ---------------------------------------------------------------
  */
-export var ModelsCardPurchaseApplicationStatus;
-(function (ModelsCardPurchaseApplicationStatus) {
-    ModelsCardPurchaseApplicationStatus["UAIS_SUCCESS"] = "SUCCESS";
-    ModelsCardPurchaseApplicationStatus["UAIS_FAILED"] = "FAILED";
-    ModelsCardPurchaseApplicationStatus["CPAS_NOT_INITIALIZED"] = "NOT_INITIALIZED";
-    ModelsCardPurchaseApplicationStatus["CPAS_PENDING"] = "PENDING";
-    ModelsCardPurchaseApplicationStatus["CPAS_SUCCESS"] = "SUCCESS";
-    ModelsCardPurchaseApplicationStatus["CPAS_FAILED"] = "FAILED";
-    ModelsCardPurchaseApplicationStatus["DOCUMENT_NOT_INITIALIZED"] = "NOT_INITIALIZED";
-    ModelsCardPurchaseApplicationStatus["DOCUMENT_SUCCESS"] = "SUCCESS";
-    ModelsCardPurchaseApplicationStatus["DOCUMENT_FAILED"] = "FAILED";
-})(ModelsCardPurchaseApplicationStatus || (ModelsCardPurchaseApplicationStatus = {}));
-export var ModelsCardTopupStatus;
-(function (ModelsCardTopupStatus) {
-    ModelsCardTopupStatus["CTS_NOT_INITIALIZED"] = "NOT_INITIALIZED";
-    ModelsCardTopupStatus["CTS_PENDING"] = "PENDING";
-    ModelsCardTopupStatus["CTS_SUCCESS"] = "SUCCESS";
-    ModelsCardTopupStatus["CTS_FAILED"] = "FAILED";
-})(ModelsCardTopupStatus || (ModelsCardTopupStatus = {}));
-export var ModelsUserAccountInfoStatus;
-(function (ModelsUserAccountInfoStatus) {
-    ModelsUserAccountInfoStatus["UAIS_NOT_INITIALIZED"] = "NOT_INITIALIZED";
-})(ModelsUserAccountInfoStatus || (ModelsUserAccountInfoStatus = {}));
+export var ModelUserCardActivationStatus;
+(function (ModelUserCardActivationStatus) {
+    ModelUserCardActivationStatus["UCAS_NOT_INITIALIZED"] = "NOT_INITIALIZED";
+    ModelUserCardActivationStatus["UCAS_PENDING"] = "PENDING";
+    ModelUserCardActivationStatus["UCAS_SUCCESS"] = "SUCCESS";
+    ModelUserCardActivationStatus["UCAS_FAILED"] = "FAILED";
+})(ModelUserCardActivationStatus || (ModelUserCardActivationStatus = {}));
+export var ModelUserAccountInfoStatus;
+(function (ModelUserAccountInfoStatus) {
+    ModelUserAccountInfoStatus["UAIS_NOT_INITIALIZED"] = "NOT_INITIALIZED";
+    ModelUserAccountInfoStatus["UAIS_SUCCESS"] = "SUCCESS";
+    ModelUserAccountInfoStatus["UAIS_FAILED"] = "FAILED";
+})(ModelUserAccountInfoStatus || (ModelUserAccountInfoStatus = {}));
+export var ModelDocumentStatus;
+(function (ModelDocumentStatus) {
+    ModelDocumentStatus["DOCUMENT_NOT_INITIALIZED"] = "NOT_INITIALIZED";
+    ModelDocumentStatus["DOCUMENT_SUCCESS"] = "SUCCESS";
+    ModelDocumentStatus["DOCUMENT_FAILED"] = "FAILED";
+})(ModelDocumentStatus || (ModelDocumentStatus = {}));
+export var ModelCardTopupStatus;
+(function (ModelCardTopupStatus) {
+    ModelCardTopupStatus["CTS_NOT_INITIALIZED"] = "NOT_INITIALIZED";
+    ModelCardTopupStatus["CTS_PENDING"] = "PENDING";
+    ModelCardTopupStatus["CTS_SUCCESS"] = "SUCCESS";
+    ModelCardTopupStatus["CTS_FAILED"] = "FAILED";
+})(ModelCardTopupStatus || (ModelCardTopupStatus = {}));
+export var ModelCardPurchaseApplicationStatus;
+(function (ModelCardPurchaseApplicationStatus) {
+    ModelCardPurchaseApplicationStatus["CPAS_NOT_INITIALIZED"] = "NOT_INITIALIZED";
+    ModelCardPurchaseApplicationStatus["CPAS_PENDING"] = "PENDING";
+    ModelCardPurchaseApplicationStatus["CPAS_SUCCESS"] = "SUCCESS";
+    ModelCardPurchaseApplicationStatus["CPAS_FAILED"] = "FAILED";
+    ModelCardPurchaseApplicationStatus["CPAS_SHIPPED"] = "SHIPPED";
+})(ModelCardPurchaseApplicationStatus || (ModelCardPurchaseApplicationStatus = {}));
 import axios from "axios";
 export var ContentType;
 (function (ContentType) {
     ContentType["Json"] = "application/json";
+    ContentType["JsonApi"] = "application/vnd.api+json";
     ContentType["FormData"] = "multipart/form-data";
     ContentType["UrlEncoded"] = "application/x-www-form-urlencoded";
     ContentType["Text"] = "text/plain";
@@ -46,7 +59,10 @@ export class HttpClient {
     secure;
     format;
     constructor({ securityWorker, secure, format, ...axiosConfig } = {}) {
-        this.instance = axios.create({ ...axiosConfig, baseURL: axiosConfig.baseURL || "/api/v1" });
+        this.instance = axios.create({
+            ...axiosConfig,
+            baseURL: axiosConfig.baseURL || "/api/v2",
+        });
         this.secure = secure;
         this.format = format;
         this.securityWorker = securityWorker;
@@ -61,7 +77,9 @@ export class HttpClient {
             ...params1,
             ...(params2 || {}),
             headers: {
-                ...((method && this.instance.defaults.headers[method.toLowerCase()]) || {}),
+                ...((method &&
+                    this.instance.defaults.headers[method.toLowerCase()]) ||
+                    {}),
                 ...(params1.headers || {}),
                 ...((params2 && params2.headers) || {}),
             },
@@ -96,10 +114,16 @@ export class HttpClient {
             {};
         const requestParams = this.mergeRequestParams(params, secureParams);
         const responseFormat = format || this.format || undefined;
-        if (type === ContentType.FormData && body && body !== null && typeof body === "object") {
+        if (type === ContentType.FormData &&
+            body &&
+            body !== null &&
+            typeof body === "object") {
             body = this.createFormData(body);
         }
-        if (type === ContentType.Text && body && body !== null && typeof body !== "string") {
+        if (type === ContentType.Text &&
+            body &&
+            body !== null &&
+            typeof body !== "string") {
             body = JSON.stringify(body);
         }
         return this.instance.request({
@@ -116,12 +140,12 @@ export class HttpClient {
     };
 }
 /**
- * @title DTPS APIs
- * @version 1.0
- * @baseUrl /api/v1
+ * @title DTPS External Partner API
+ * @version 2.0
+ * @baseUrl /api/v2
  * @contact
  *
- * DTPS Apis.
+ * DTPS monolith API documentation. Each HTTP engine exposes its own filtered Swagger document.
  */
 export class Api {
     http;
@@ -130,87 +154,159 @@ export class Api {
     }
     card = {
         /**
-         * @description Call this api after 1. /user/create  and 2. /user/documents/upload ( after uploading all required docs )
+         * @description Activate Card
          *
-         * @tags card application
+         * @tags engine-partner-api
+         * @name ActivateCard
+         * @summary Activate Card
+         * @request POST:/card/activate
+         */
+        activateCard: (card, params = {}) => this.http.request({
+            path: `/card/activate`,
+            method: "POST",
+            body: card,
+            type: ContentType.Json,
+            format: "json",
+            ...params,
+        }),
+        /**
+         * @description Activate Replacement Card
+         *
+         * @tags engine-partner-api
+         * @name ActivateReplacementCard
+         * @summary Activate Replacement Card
+         * @request POST:/card/activate/replacement
+         */
+        activateReplacementCard: (card, params = {}) => this.http.request({
+            path: `/card/activate/replacement`,
+            method: "POST",
+            body: card,
+            type: ContentType.Json,
+            format: "json",
+            ...params,
+        }),
+        /**
+         * @description Apply Card
+         *
+         * @tags engine-partner-api
          * @name ApplyCard
          * @summary Apply Card
          * @request POST:/card/application/apply
-         * @secure
          */
-        applyCard: (card, params = {}) => this.http.request({
+        applyCard: (application, params = {}) => this.http.request({
             path: `/card/application/apply`,
             method: "POST",
-            body: card,
-            secure: true,
+            body: application,
             type: ContentType.Json,
             format: "json",
             ...params,
         }),
         /**
-         * @description Get All Card Applications. status 0=NOT_INITIALIZED 1=PENDING 2=SUCCESS 3=FAILED
+         * @description Get All Partner Applications
          *
-         * @tags card application
-         * @name GetAllCardApplications
-         * @summary Get All Card Applications
+         * @tags engine-partner-api
+         * @name GetAllPartnerApplications
+         * @summary Get All Partner Applications
          * @request GET:/card/application/list
-         * @secure
          */
-        getAllCardApplications: (params = {}) => this.http.request({
+        getAllPartnerApplications: (params = {}) => this.http.request({
             path: `/card/application/list`,
             method: "GET",
-            secure: true,
             type: ContentType.Json,
             format: "json",
             ...params,
         }),
         /**
-         * @description Get Card Application. status 0=NOT_INITIALIZED 1=PENDING 2=SUCCESS 3=FAILED
+         * @description Apply Card
          *
-         * @tags card application
-         * @name GetCardApplication
-         * @summary Get Card Application
-         * @request GET:/card/application/{cardapplicationId}
-         * @secure
+         * @tags engine-partner-api
+         * @name ApplyCard2
+         * @summary Apply Card
+         * @request POST:/card/application/noverify/apply
+         * @originalName applyCard
+         * @duplicate
          */
-        getCardApplication: (cardapplicationId, params = {}) => this.http.request({
+        applyCard2: (application, params = {}) => this.http.request({
+            path: `/card/application/noverify/apply`,
+            method: "POST",
+            body: application,
+            type: ContentType.Json,
+            format: "json",
+            ...params,
+        }),
+        /**
+         * @description Get Card Application By Id
+         *
+         * @tags engine-partner-api
+         * @name GetCardApplicationById
+         * @summary Get Card Application By Id
+         * @request GET:/card/application/{cardapplicationId}
+         */
+        getCardApplicationById: (cardapplicationId, params = {}) => this.http.request({
             path: `/card/application/${cardapplicationId}`,
             method: "GET",
-            secure: true,
             type: ContentType.Json,
             format: "json",
             ...params,
         }),
         /**
-         * @description Get Card Balance
+         * @description Get Card Balance By Card Id
          *
-         * @tags card
-         * @name GetCardBalance
-         * @summary Get Card Balance
-         * @request GET:/card/balance/{cardnumber}
-         * @secure
+         * @tags engine-partner-api
+         * @name GetCardBalanceByCardId
+         * @summary Get Card Balance By Card Id
+         * @request GET:/card/balance/id/{cardId}
          */
-        getCardBalance: (cardnumber, params = {}) => this.http.request({
-            path: `/card/balance/${cardnumber}`,
+        getCardBalanceByCardId: (cardId, params = {}) => this.http.request({
+            path: `/card/balance/id/${cardId}`,
             method: "GET",
-            secure: true,
             type: ContentType.Json,
             format: "json",
             ...params,
         }),
         /**
-         * @description Get Available Cards
+         * @description Block a virtual card
          *
-         * @tags card
-         * @name GetAvailableCards
-         * @summary Get Available Cards
-         * @request GET:/card/list
-         * @secure
+         * @tags engine-partner-api
+         * @name BlockVirtualCard
+         * @summary Block Virtual Card
+         * @request POST:/card/block
          */
-        getAvailableCards: (params = {}) => this.http.request({
+        blockVirtualCard: (card, params = {}) => this.http.request({
+            path: `/card/block`,
+            method: "POST",
+            body: card,
+            type: ContentType.Json,
+            format: "json",
+            ...params,
+        }),
+        /**
+         * @description Enable/Disable Online Transactions
+         *
+         * @tags engine-partner-api
+         * @name EnableDisableOnlineTransactions
+         * @summary Enable/Disable Online Transactions
+         * @request POST:/card/enable_online_txn
+         */
+        enableDisableOnlineTransactions: (card, params = {}) => this.http.request({
+            path: `/card/enable_online_txn`,
+            method: "POST",
+            body: card,
+            type: ContentType.Json,
+            format: "json",
+            ...params,
+        }),
+        /**
+         * @description Get Cards
+         *
+         * @tags engine-partner-api
+         * @name GetCards
+         * @summary Get Cards
+         * @request GET:/card/list
+         */
+        getCards: (params = {}) => this.http.request({
             path: `/card/list`,
             method: "GET",
-            secure: true,
             type: ContentType.Json,
             format: "json",
             ...params,
@@ -218,51 +314,62 @@ export class Api {
         /**
          * @description Apply Card Topup
          *
-         * @tags card topup
+         * @tags engine-partner-api
          * @name ApplyCardTopup
          * @summary Apply Card Topup
          * @request POST:/card/topup/apply
-         * @secure
          */
-        applyCardTopup: (card, params = {}) => this.http.request({
+        applyCardTopup: (topup, params = {}) => this.http.request({
             path: `/card/topup/apply`,
             method: "POST",
-            body: card,
-            secure: true,
+            body: topup,
             type: ContentType.Json,
             format: "json",
             ...params,
         }),
         /**
-         * @description Get All Card Topup Applications
+         * @description Get All Partner Card Topup Applications
          *
-         * @tags card topup
-         * @name GetAllCardTopupApplications
-         * @summary Get All Card Topup Applications
+         * @tags engine-partner-api
+         * @name GetAllPartnerCardTopupApplications
+         * @summary Get All Partner Card Topup Applications
          * @request GET:/card/topup/list
-         * @secure
          */
-        getAllCardTopupApplications: (params = {}) => this.http.request({
+        getAllPartnerCardTopupApplications: (params = {}) => this.http.request({
             path: `/card/topup/list`,
             method: "GET",
-            secure: true,
             type: ContentType.Json,
             format: "json",
             ...params,
         }),
         /**
-         * @description Get  Card Txn History
+         * @description Get Card Txn History By Card Id
          *
-         * @tags card
-         * @name GetCardTxnHistory
-         * @summary Get  Card Txn History
-         * @request GET:/card/txnhistory/{cardnumber}
-         * @secure
+         * @tags engine-partner-api
+         * @name GetCardTxnHistoryByCardId
+         * @summary Get Card Txn History By Card Id
+         * @request GET:/card/txnhistory/id/{cardId}
          */
-        getCardTxnHistory: (cardnumber, params = {}) => this.http.request({
-            path: `/card/txnhistory/${cardnumber}`,
+        getCardTxnHistoryByCardId: (cardId, query, params = {}) => this.http.request({
+            path: `/card/txnhistory/id/${cardId}`,
             method: "GET",
-            secure: true,
+            query: query,
+            type: ContentType.Json,
+            format: "json",
+            ...params,
+        }),
+        /**
+         * @description Unblock a virtual card
+         *
+         * @tags engine-partner-api
+         * @name UnblockVirtualCard
+         * @summary Unblock Virtual Card
+         * @request POST:/card/unblock
+         */
+        unblockVirtualCard: (card, params = {}) => this.http.request({
+            path: `/card/unblock`,
+            method: "POST",
+            body: card,
             type: ContentType.Json,
             format: "json",
             ...params,
@@ -270,15 +377,15 @@ export class Api {
     };
     user = {
         /**
-         * @description Add a new User
+         * No description
          *
-         * @tags user
-         * @name CreateUser
-         * @summary Create User
+         * @tags engine-partner-api
+         * @name CreateAPartnerUser
+         * @summary Create a partner user
          * @request POST:/user/create
          * @secure
          */
-        createUser: (user, params = {}) => this.http.request({
+        createAPartnerUser: (user, params = {}) => this.http.request({
             path: `/user/create`,
             method: "POST",
             body: user,
@@ -288,16 +395,50 @@ export class Api {
             ...params,
         }),
         /**
-         * @description possible docName values PASSPORT, SIGNATURE, SELFIE, SELFIE_WITH_PASSPORT
+         * No description
          *
-         * @tags user
+         * @tags engine-partner-api
          * @name UploadUserDocuments
-         * @summary Upload User Documents
+         * @summary Upload user documents
          * @request POST:/user/document/upload
          * @secure
          */
-        uploadUserDocuments: (user, params = {}) => this.http.request({
+        uploadUserDocuments: (documents, params = {}) => this.http.request({
             path: `/user/document/upload`,
+            method: "POST",
+            body: documents,
+            secure: true,
+            type: ContentType.Json,
+            format: "json",
+            ...params,
+        }),
+        /**
+         * No description
+         *
+         * @tags engine-partner-api
+         * @name ListPartnerUsers
+         * @summary List partner users
+         * @request GET:/user/list
+         * @secure
+         */
+        listPartnerUsers: (params = {}) => this.http.request({
+            path: `/user/list`,
+            method: "GET",
+            secure: true,
+            format: "json",
+            ...params,
+        }),
+        /**
+         * No description
+         *
+         * @tags engine-partner-api
+         * @name UpdateAPartnerUser
+         * @summary Update a partner user
+         * @request POST:/user/update/{userId}
+         * @secure
+         */
+        updateAPartnerUser: (userId, user, params = {}) => this.http.request({
+            path: `/user/update/${userId}`,
             method: "POST",
             body: user,
             secure: true,
@@ -306,36 +447,18 @@ export class Api {
             ...params,
         }),
         /**
-         * @description Get All Users
+         * No description
          *
-         * @tags user
-         * @name GetAllUsers
-         * @summary Get All Users
-         * @request GET:/user/list
-         * @secure
-         */
-        getAllUsers: (params = {}) => this.http.request({
-            path: `/user/list`,
-            method: "GET",
-            secure: true,
-            type: ContentType.Json,
-            format: "json",
-            ...params,
-        }),
-        /**
-         * @description Get  Partner User
-         *
-         * @tags user
-         * @name GetPartnerUser
-         * @summary Get  Partner User
+         * @tags engine-partner-api
+         * @name GetAPartnerUserById
+         * @summary Get a partner user by ID
          * @request GET:/user/{userId}
          * @secure
          */
-        getPartnerUser: (userId, params = {}) => this.http.request({
+        getAPartnerUserById: (userId, params = {}) => this.http.request({
             path: `/user/${userId}`,
             method: "GET",
             secure: true,
-            type: ContentType.Json,
             format: "json",
             ...params,
         }),
