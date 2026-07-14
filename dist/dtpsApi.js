@@ -9,25 +9,6 @@
  * ## SOURCE: https://github.com/acacode/swagger-typescript-api ##
  * ---------------------------------------------------------------
  */
-export var ModelUserCardActivationStatus;
-(function (ModelUserCardActivationStatus) {
-    ModelUserCardActivationStatus["UCAS_NOT_INITIALIZED"] = "NOT_INITIALIZED";
-    ModelUserCardActivationStatus["UCAS_PENDING"] = "PENDING";
-    ModelUserCardActivationStatus["UCAS_SUCCESS"] = "SUCCESS";
-    ModelUserCardActivationStatus["UCAS_FAILED"] = "FAILED";
-})(ModelUserCardActivationStatus || (ModelUserCardActivationStatus = {}));
-export var ModelUserAccountInfoStatus;
-(function (ModelUserAccountInfoStatus) {
-    ModelUserAccountInfoStatus["UAIS_NOT_INITIALIZED"] = "NOT_INITIALIZED";
-    ModelUserAccountInfoStatus["UAIS_SUCCESS"] = "SUCCESS";
-    ModelUserAccountInfoStatus["UAIS_FAILED"] = "FAILED";
-})(ModelUserAccountInfoStatus || (ModelUserAccountInfoStatus = {}));
-export var ModelDocumentStatus;
-(function (ModelDocumentStatus) {
-    ModelDocumentStatus["DOCUMENT_NOT_INITIALIZED"] = "NOT_INITIALIZED";
-    ModelDocumentStatus["DOCUMENT_SUCCESS"] = "SUCCESS";
-    ModelDocumentStatus["DOCUMENT_FAILED"] = "FAILED";
-})(ModelDocumentStatus || (ModelDocumentStatus = {}));
 export var ModelCardTopupStatus;
 (function (ModelCardTopupStatus) {
     ModelCardTopupStatus["CTS_NOT_INITIALIZED"] = "NOT_INITIALIZED";

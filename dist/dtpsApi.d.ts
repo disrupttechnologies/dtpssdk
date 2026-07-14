@@ -1,19 +1,3 @@
-export declare enum ModelUserCardActivationStatus {
-    UCAS_NOT_INITIALIZED = "NOT_INITIALIZED",
-    UCAS_PENDING = "PENDING",
-    UCAS_SUCCESS = "SUCCESS",
-    UCAS_FAILED = "FAILED"
-}
-export declare enum ModelUserAccountInfoStatus {
-    UAIS_NOT_INITIALIZED = "NOT_INITIALIZED",
-    UAIS_SUCCESS = "SUCCESS",
-    UAIS_FAILED = "FAILED"
-}
-export declare enum ModelDocumentStatus {
-    DOCUMENT_NOT_INITIALIZED = "NOT_INITIALIZED",
-    DOCUMENT_SUCCESS = "SUCCESS",
-    DOCUMENT_FAILED = "FAILED"
-}
 export declare enum ModelCardTopupStatus {
     CTS_NOT_INITIALIZED = "NOT_INITIALIZED",
     CTS_PENDING = "PENDING",
@@ -49,6 +33,7 @@ export interface DtoPartnerApiCreateUserRequest {
     birth_country: string;
     district: string;
     dob: string;
+    documents?: DtoPartnerApiDocumentInputDTO[];
     first_name: string;
     gender: string;
     isd_code: number;
@@ -139,8 +124,7 @@ export interface ModelCardPurchaseApplication {
     embossName?: string;
     handledById?: string;
     id?: string;
-    maccountNumber?: string;
-    mcardNumber?: string;
+    memberCardId?: string;
     pcid?: string;
     remarks?: string;
     shippingId?: string;
@@ -160,20 +144,7 @@ export interface ModelCardTopupApplication {
     requestedAmount?: string;
     status?: ModelCardTopupStatus;
     updatedAt?: string;
-    userCard?: ModelUserCard;
     userCardId?: string;
-}
-export interface ModelPartner {
-    createdAt?: string;
-    createdByID?: string;
-    email?: string;
-    floatBalMinThreshold?: string;
-    floatBalance?: string;
-    id?: string;
-    is2FAEnabled?: boolean;
-    isEnabled?: boolean;
-    name?: string;
-    updatedAt?: string;
 }
 export interface ModelPartnerCard {
     createdAt?: string;
@@ -186,68 +157,14 @@ export interface ModelPartnerCard {
     updatedAt?: string;
 }
 export interface ModelUser {
-    accountInfo?: ModelUserAccountInfo;
-    applications?: ModelCardPurchaseApplication[];
-    cards?: ModelUserCard[];
     createdAt?: string;
     email?: string;
     fullName?: string;
     id?: string;
     isEnabled?: boolean;
-    partner?: ModelPartner;
     partnerId?: string;
     passportNumber?: string;
     updatedAt?: string;
-}
-export interface ModelUserAccountInfo {
-    createdAt?: string;
-    documents?: ModelUserDocument[];
-    failedRemarks?: string;
-    id?: string;
-    metadata?: string;
-    status?: ModelUserAccountInfoStatus;
-    updatedAt?: string;
-    userId?: string;
-}
-export interface ModelUserCard {
-    accountNumber?: string;
-    applicationId?: string;
-    card?: ModelPartnerCard;
-    cardActivationDetails?: ModelUserCardActivation;
-    cardNumber?: string;
-    cardTopupApplication?: ModelCardTopupApplication[];
-    createdAt?: string;
-    embossName?: string;
-    id?: string;
-    isActive?: boolean;
-    isEnabled?: boolean;
-    isMemberCard?: boolean;
-    pcid?: string;
-    updatedAt?: string;
-    user?: ModelUser;
-    userId?: string;
-}
-export interface ModelUserCardActivation {
-    createdAt?: string;
-    failedRemarks?: string;
-    handledByID?: string;
-    id?: string;
-    imgName?: string;
-    name?: string;
-    status?: ModelUserCardActivationStatus;
-    updatedAt?: string;
-    userCard?: ModelUserCard;
-    userCardId?: string;
-}
-export interface ModelUserDocument {
-    createdAt?: string;
-    documentStatus?: ModelDocumentStatus;
-    documentType?: string;
-    failedRemarks?: string;
-    fileName?: string;
-    id?: string;
-    updatedAt?: string;
-    userInfoId?: string;
 }
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, ResponseType } from "axios";
 export type QueryParamsType = Record<string | number, any>;
