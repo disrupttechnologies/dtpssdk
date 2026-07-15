@@ -166,6 +166,17 @@ export interface ModelUser {
     passportNumber?: string;
     updatedAt?: string;
 }
+export interface RepositoryCPADetailsPayload {
+    failed?: string[];
+    pending?: string[];
+    success?: RepositoryCPASuccess[];
+}
+export interface RepositoryCPASuccess {
+    accountNumber?: string;
+    applicationId?: string;
+    cardNumber?: string;
+    ucid?: string;
+}
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, ResponseType } from "axios";
 export type QueryParamsType = Record<string | number, any>;
 export interface FullRequestParams extends Omit<AxiosRequestConfig, "data" | "params" | "url" | "responseType"> {
@@ -253,9 +264,32 @@ export declare class Api<SecurityDataType extends unknown> {
          * @tags engine-partner-api
          * @name GetAllPartnerApplications
          * @summary Get All Partner Applications
-         * @request GET:/card/application/list
+         * @request GET:/card/application/details
          */
-        getAllPartnerApplications: (params?: RequestParams) => Promise<AxiosResponse<ModelCardPurchaseApplication[], any>>;
+        getAllPartnerApplications: (query?: {
+            /** Comma-separated card application ids */
+            ids?: string;
+        }, params?: RequestParams) => Promise<AxiosResponse<RepositoryCPADetailsPayload, any>>;
+        /**
+         * @description Get All Partner Applications
+         *
+         * @tags engine-partner-api
+         * @name GetAllPartnerApplications2
+         * @summary Get All Partner Applications
+         * @request GET:/card/application/list
+         * @originalName getAllPartnerApplications
+         * @duplicate
+         */
+        getAllPartnerApplications2: (query?: {
+            /** Status */
+            status?: string;
+            /** Comma-separated card application ids */
+            ids?: string;
+            /** page no for pagination */
+            page?: number;
+            /** limit no for pagination */
+            limit?: number;
+        }, params?: RequestParams) => Promise<AxiosResponse<ModelCardPurchaseApplication[], any>>;
         /**
          * @description Apply Card
          *

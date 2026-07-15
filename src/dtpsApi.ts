@@ -197,6 +197,19 @@ export interface ModelUser {
   updatedAt?: string;
 }
 
+export interface RepositoryCPADetailsPayload {
+  failed?: string[];
+  pending?: string[];
+  success?: RepositoryCPASuccess[];
+}
+
+export interface RepositoryCPASuccess {
+  accountNumber?: string;
+  applicationId?: string;
+  cardNumber?: string;
+  ucid?: string;
+}
+
 import type {
   AxiosInstance,
   AxiosRequestConfig,
@@ -457,12 +470,51 @@ export class Api<SecurityDataType extends unknown> {
      * @tags engine-partner-api
      * @name GetAllPartnerApplications
      * @summary Get All Partner Applications
-     * @request GET:/card/application/list
+     * @request GET:/card/application/details
      */
-    getAllPartnerApplications: (params: RequestParams = {}) =>
+    getAllPartnerApplications: (
+      query?: {
+        /** Comma-separated card application ids */
+        ids?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<RepositoryCPADetailsPayload, any>({
+        path: `/card/application/details`,
+        method: "GET",
+        query: query,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * @description Get All Partner Applications
+     *
+     * @tags engine-partner-api
+     * @name GetAllPartnerApplications2
+     * @summary Get All Partner Applications
+     * @request GET:/card/application/list
+     * @originalName getAllPartnerApplications
+     * @duplicate
+     */
+    getAllPartnerApplications2: (
+      query?: {
+        /** Status */
+        status?: string;
+        /** Comma-separated card application ids */
+        ids?: string;
+        /** page no for pagination */
+        page?: number;
+        /** limit no for pagination */
+        limit?: number;
+      },
+      params: RequestParams = {},
+    ) =>
       this.http.request<ModelCardPurchaseApplication[], any>({
         path: `/card/application/list`,
         method: "GET",
+        query: query,
         type: ContentType.Json,
         format: "json",
         ...params,
