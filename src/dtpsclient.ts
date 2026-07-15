@@ -29,28 +29,38 @@ export class DTPSClient {
     const httpClient = new HttpClient({
       baseURL: url,
     });
-    httpClient.instance.interceptors.request.use(
-      (config: any) => {
-        //@ts-ignore
-        const fullURL = config.baseURL + config.url;
-        if (config.data) {
-          config.data = JSON.stringify(config.data);
-        }
-        const urlObj = new URL(fullURL);
-        const signature = generateSignature(
-          apiSecret,
-          urlObj.pathname,
-          config.data,
-        );
-        config.headers["X-Api-Key"] = apiKey;
-        config.headers["X-Api-Signature"] = signature;
-        return config;
-      },
-      (error: any) => {
-        // Handle the error
-        return Promise.reject(error);
-      },
-    );
+    httpClient.instance.interceptors.request.use((config: any) => {
+      const fullUrl = httpClient.instance.getUri(config);
+      const urlObj = new URL(fullUrl);
+
+      // const urlObj = new URL(config.url!, config.baseURL);
+
+      // Merge params from config.params if they exist
+      if (config.params) {
+        Object.entries(config.params).forEach(([key, value]) => {
+          if (value !== undefined && value !== null) {
+            urlObj.searchParams.set(key, String(value));
+          }
+        });
+      }
+
+      const pathWithQuery = `${urlObj.pathname}${urlObj.search}`;
+
+      const body = config.data
+        ? typeof config.data === "string"
+          ? config.data
+          : JSON.stringify(config.data)
+        : "";
+
+      config.data = body;
+
+      const signature = generateSignature(apiSecret, pathWithQuery, body);
+
+      config.headers["X-Api-Key"] = apiKey;
+      config.headers["X-Api-Signature"] = signature;
+
+      return config;
+    });
 
     httpClient.instance.interceptors.response.use(
       (response: any) => {
