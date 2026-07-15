@@ -666,10 +666,21 @@ export class Api<SecurityDataType extends unknown> {
      * @summary Get All Partner Card Topup Applications
      * @request GET:/card/topup/list
      */
-    getAllPartnerCardTopupApplications: (params: RequestParams = {}) =>
+    getAllPartnerCardTopupApplications: (
+      query?: {
+        /** Comma-separated card topup application ids */
+        topupids?: string;
+        /** page no for pagination */
+        page?: number;
+        /** limit no for pagination */
+        limit?: number;
+      },
+      params: RequestParams = {},
+    ) =>
       this.http.request<ModelCardTopupApplication[], any>({
         path: `/card/topup/list`,
         method: "GET",
+        query: query,
         type: ContentType.Json,
         format: "json",
         ...params,

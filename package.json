@@ -9,7 +9,7 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "generate:doc": "npx swagger-typescript-api generate -p https://partner-api.dtps.sandbox.backofficeportal.app/docs/doc.json -o src -n dtpsApi.ts --templates ./src/templates --axios --single-http-client",
+    "generate:doc": "npx swagger-typescript-api generate -p http://localhost:8083/docs/doc.json -o src -n dtpsApi.ts --templates ./src/templates --axios --single-http-client",
     "build": "if [ ! -d dist ]; then rm -f tsconfig.tsbuildinfo; fi && npx tsc",
     "prepare": "husky",
     "test": "jest"

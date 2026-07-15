@@ -361,7 +361,14 @@ export declare class Api<SecurityDataType extends unknown> {
          * @summary Get All Partner Card Topup Applications
          * @request GET:/card/topup/list
          */
-        getAllPartnerCardTopupApplications: (params?: RequestParams) => Promise<AxiosResponse<ModelCardTopupApplication[], any>>;
+        getAllPartnerCardTopupApplications: (query?: {
+            /** Comma-separated card topup application ids */
+            topupids?: string;
+            /** page no for pagination */
+            page?: number;
+            /** limit no for pagination */
+            limit?: number;
+        }, params?: RequestParams) => Promise<AxiosResponse<ModelCardTopupApplication[], any>>;
         /**
          * @description Get Card Txn History By Card Id
          *

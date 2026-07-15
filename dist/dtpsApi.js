@@ -333,9 +333,10 @@ export class Api {
          * @summary Get All Partner Card Topup Applications
          * @request GET:/card/topup/list
          */
-        getAllPartnerCardTopupApplications: (params = {}) => this.http.request({
+        getAllPartnerCardTopupApplications: (query, params = {}) => this.http.request({
             path: `/card/topup/list`,
             method: "GET",
+            query: query,
             type: ContentType.Json,
             format: "json",
             ...params,
