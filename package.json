@@ -4,7 +4,11 @@
   "types": "dist/dtpsclient.d.ts",
   "exports": {
     ".": "./dist/dtpsclient.js",
-    "./types": "./dist/dtpsclient.d.ts"
+    "./types": "./dist/dtpsclient.d.ts",
+    "./dist/dtpsApi": {
+      "types": "./dist/dtpsApi.d.ts",
+      "default": "./dist/dtpsApi.js"
+    }
   },
   "type": "module",
   "version": "0.0.1",
