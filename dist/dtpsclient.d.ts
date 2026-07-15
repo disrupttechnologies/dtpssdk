@@ -1,4 +1,4 @@
-import { Api } from "./dtpsApi";
+import { Api } from "./dtpsApi.js";
 interface DTPSInitConfig {
     url: string;
     apiKey: string;

@@ -1,5 +1,6 @@
-import { Api, HttpClient } from "./dtpsApi";
+// import { Api, HttpClient } from "./dtpsApi";
 import CryptoJS from "crypto-js";
+import { Api, HttpClient } from "./dtpsApi.js";
 const generateSignature = (secret, path, data) => {
     let message = path;
     if (data) {

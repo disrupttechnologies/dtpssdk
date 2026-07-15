@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+        "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "incremental": true,
     "declaration": true,
     "declarationMap": true,
@@ -8,9 +10,9 @@
     "lib": [
       "ESNext"
     ],
-    "module": "esnext",
+    // "module": "esnext",
     "target": "esnext",
-    "moduleResolution": "bundler",
+    // "moduleResolution": "bundler",
     "moduleDetection": "force",
     "allowImportingTsExtensions": false,
     "noEmit": false,
