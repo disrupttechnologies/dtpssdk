@@ -465,14 +465,14 @@ export class Api<SecurityDataType extends unknown> {
       }),
 
     /**
-     * @description Get All Partner Applications
+     * @description GetCardApplicationDetails
      *
      * @tags engine-partner-api
-     * @name GetAllPartnerApplications
-     * @summary Get All Partner Applications
+     * @name GetCardApplicationDetails
+     * @summary GetCardApplicationDetails
      * @request GET:/card/application/details
      */
-    getAllPartnerApplications: (
+    getCardApplicationDetails: (
       query?: {
         /** Comma-separated card application ids */
         ids?: string;
@@ -492,13 +492,11 @@ export class Api<SecurityDataType extends unknown> {
      * @description Get All Partner Applications
      *
      * @tags engine-partner-api
-     * @name GetAllPartnerApplications2
+     * @name GetAllPartnerApplications
      * @summary Get All Partner Applications
      * @request GET:/card/application/list
-     * @originalName getAllPartnerApplications
-     * @duplicate
      */
-    getAllPartnerApplications2: (
+    getAllPartnerApplications: (
       query?: {
         /** Status */
         status?: string;

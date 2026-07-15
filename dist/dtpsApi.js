@@ -183,14 +183,14 @@ export class Api {
             ...params,
         }),
         /**
-         * @description Get All Partner Applications
+         * @description GetCardApplicationDetails
          *
          * @tags engine-partner-api
-         * @name GetAllPartnerApplications
-         * @summary Get All Partner Applications
+         * @name GetCardApplicationDetails
+         * @summary GetCardApplicationDetails
          * @request GET:/card/application/details
          */
-        getAllPartnerApplications: (query, params = {}) => this.http.request({
+        getCardApplicationDetails: (query, params = {}) => this.http.request({
             path: `/card/application/details`,
             method: "GET",
             query: query,
@@ -202,13 +202,11 @@ export class Api {
          * @description Get All Partner Applications
          *
          * @tags engine-partner-api
-         * @name GetAllPartnerApplications2
+         * @name GetAllPartnerApplications
          * @summary Get All Partner Applications
          * @request GET:/card/application/list
-         * @originalName getAllPartnerApplications
-         * @duplicate
          */
-        getAllPartnerApplications2: (query, params = {}) => this.http.request({
+        getAllPartnerApplications: (query, params = {}) => this.http.request({
             path: `/card/application/list`,
             method: "GET",
             query: query,

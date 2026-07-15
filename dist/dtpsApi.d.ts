@@ -259,14 +259,14 @@ export declare class Api<SecurityDataType extends unknown> {
          */
         applyCard: (application: DtoPartnerApiIssueCardRequest, params?: RequestParams) => Promise<AxiosResponse<ModelCardPurchaseApplication, any>>;
         /**
-         * @description Get All Partner Applications
+         * @description GetCardApplicationDetails
          *
          * @tags engine-partner-api
-         * @name GetAllPartnerApplications
-         * @summary Get All Partner Applications
+         * @name GetCardApplicationDetails
+         * @summary GetCardApplicationDetails
          * @request GET:/card/application/details
          */
-        getAllPartnerApplications: (query?: {
+        getCardApplicationDetails: (query?: {
             /** Comma-separated card application ids */
             ids?: string;
         }, params?: RequestParams) => Promise<AxiosResponse<RepositoryCPADetailsPayload, any>>;
@@ -274,13 +274,11 @@ export declare class Api<SecurityDataType extends unknown> {
          * @description Get All Partner Applications
          *
          * @tags engine-partner-api
-         * @name GetAllPartnerApplications2
+         * @name GetAllPartnerApplications
          * @summary Get All Partner Applications
          * @request GET:/card/application/list
-         * @originalName getAllPartnerApplications
-         * @duplicate
          */
-        getAllPartnerApplications2: (query?: {
+        getAllPartnerApplications: (query?: {
             /** Status */
             status?: string;
             /** Comma-separated card application ids */
