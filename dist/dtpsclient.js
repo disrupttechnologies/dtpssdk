@@ -31,6 +31,7 @@ export class DTPSClient {
                     }
                 });
             }
+            urlObj.search = urlObj.search.replace(/%2C/g, ",");
             const pathWithQuery = `${urlObj.pathname}${urlObj.search}`;
             const body = config.data
                 ? typeof config.data === "string"

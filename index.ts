@@ -10,10 +10,6 @@ const main = async () => {
     apiKey,
     apiSecret,
   });
-
-  const rersp = await client.card.getCards({});
-
-  console.log("eresssa", rersp.data);
 };
 
 main();
