@@ -24,6 +24,14 @@ export var ModelCardPurchaseApplicationStatus;
     ModelCardPurchaseApplicationStatus["CPAS_FAILED"] = "FAILED";
     ModelCardPurchaseApplicationStatus["CPAS_SHIPPED"] = "SHIPPED";
 })(ModelCardPurchaseApplicationStatus || (ModelCardPurchaseApplicationStatus = {}));
+export var DtoDocumentType;
+(function (DtoDocumentType) {
+    DtoDocumentType["DOCUMENT_TYPE_PASSPORT"] = "PASSPORT";
+    DtoDocumentType["DOCUMENT_TYPE_SELFIE_WITH_PASSPORT"] = "SELFIE_WITH_PASSPORT";
+    DtoDocumentType["DOCUMENT_TYPE_SIGNATURE"] = "SIGNATURE";
+    DtoDocumentType["DOCUMENT_TYPE_PROOF_OF_ADDRESS"] = "POA";
+    DtoDocumentType["DOCUMENT_TYPE_CP_INTERNAL_PASSPORT"] = "CP_INTERNAL_PASSPORT";
+})(DtoDocumentType || (DtoDocumentType = {}));
 import axios from "axios";
 export var ContentType;
 (function (ContentType) {
@@ -397,15 +405,15 @@ export class Api {
          * No description
          *
          * @tags engine-partner-api
-         * @name UploadUserDocuments
-         * @summary Upload user documents
-         * @request POST:/user/document/upload
+         * @name ValidateAPassportDocumentViaDtkyc
+         * @summary Validate a passport document via dtkyc
+         * @request POST:/user/document/validate-passport
          * @secure
          */
-        uploadUserDocuments: (documents, params = {}) => this.http.request({
-            path: `/user/document/upload`,
+        validateAPassportDocumentViaDtkyc: (document, params = {}) => this.http.request({
+            path: `/user/document/validate-passport`,
             method: "POST",
-            body: documents,
+            body: document,
             secure: true,
             type: ContentType.Json,
             format: "json",
@@ -431,13 +439,13 @@ export class Api {
          * No description
          *
          * @tags engine-partner-api
-         * @name UpdateAPartnerUser
-         * @summary Update a partner user
-         * @request POST:/user/update/{userId}
+         * @name ResubmitUserKyc
+         * @summary Resubmit user kyc
+         * @request POST:/user/resubmit
          * @secure
          */
-        updateAPartnerUser: (userId, user, params = {}) => this.http.request({
-            path: `/user/update/${userId}`,
+        resubmitUserKyc: (user, params = {}) => this.http.request({
+            path: `/user/resubmit`,
             method: "POST",
             body: user,
             secure: true,

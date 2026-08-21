@@ -25,8 +25,33 @@ export enum ModelCardPurchaseApplicationStatus {
   CPAS_SHIPPED = "SHIPPED",
 }
 
+export enum DtoDocumentType {
+  DOCUMENT_TYPE_PASSPORT = "PASSPORT",
+  DOCUMENT_TYPE_SELFIE_WITH_PASSPORT = "SELFIE_WITH_PASSPORT",
+  DOCUMENT_TYPE_SIGNATURE = "SIGNATURE",
+  DOCUMENT_TYPE_PROOF_OF_ADDRESS = "POA",
+  DOCUMENT_TYPE_CP_INTERNAL_PASSPORT = "CP_INTERNAL_PASSPORT",
+}
+
+export interface DtkycPassportValidationResult {
+  dob?: string;
+  expiryDate?: string;
+  firstName?: string;
+  lastName?: string;
+  message?: string;
+  nationality?: string;
+  passportNumber?: string;
+  sex?: string;
+  valid?: boolean;
+}
+
 export interface DtoBlockUnblockCardInput {
   cardId: string;
+}
+
+export interface DtoDocumentInput {
+  base64: string;
+  docType: DtoDocumentType;
 }
 
 export interface DtoOkResponse {
@@ -51,17 +76,10 @@ export interface DtoPartnerApiBalanceResponse {
 export interface DtoPartnerApiCreateUserRequest {
   birth_country: string;
   district: string;
-  dob: string;
-  documents?: DtoPartnerApiDocumentInputDTO[];
-  first_name: string;
-  gender: string;
+  documents?: DtoDocumentInput[];
   isd_code: number;
-  last_name: string;
   mail: string;
   occupation: string;
-  passport_expiry_date: string;
-  passport_issue_date: string;
-  passportnumber: string;
   /** @maxLength 50 */
   place_of_birth: string;
   province: string;
@@ -71,13 +89,8 @@ export interface DtoPartnerApiCreateUserRequest {
    */
   telephone: string;
   /** @maxLength 5 */
-  title: string;
+  title?: string;
   village: string;
-}
-
-export interface DtoPartnerApiDocumentInputDTO {
-  base64data: string;
-  docName: string;
 }
 
 export interface DtoPartnerApiIssueCardRequest {
@@ -101,28 +114,22 @@ export interface DtoPartnerApiReplacementCardActivateRequest {
 export interface DtoPartnerApiUpdateUserRequest {
   birth_country?: string;
   district?: string;
-  dob?: string;
-  first_name?: string;
-  gender?: string;
+  documents?: DtoDocumentInput[];
   isd_code?: number;
-  last_name?: string;
   mail?: string;
   occupation?: string;
-  passport_expiry_date?: string;
-  passport_issue_date?: string;
-  passportnumber?: string;
   /** @maxLength 50 */
   place_of_birth?: string;
   province?: string;
   telephone?: string;
   /** @maxLength 5 */
   title?: string;
+  userId: string;
   village?: string;
 }
 
-export interface DtoPartnerApiUploadUserDocsRequest {
-  documents: DtoPartnerApiDocumentInputDTO[];
-  userId: string;
+export interface DtoPartnerApiValidatePassportRequest {
+  base64: string;
 }
 
 export interface DtoVCSetOnlineTxnInput {
@@ -147,6 +154,7 @@ export interface JdbTransactionHistoryItem {
 
 export interface ModelCardPurchaseApplication {
   cardDeliveryAddress?: string;
+  cpPhysicalCardId?: string;
   createdAt?: string;
   embossName?: string;
   handledById?: string;
@@ -762,19 +770,19 @@ export class Api<SecurityDataType extends unknown> {
      * No description
      *
      * @tags engine-partner-api
-     * @name UploadUserDocuments
-     * @summary Upload user documents
-     * @request POST:/user/document/upload
+     * @name ValidateAPassportDocumentViaDtkyc
+     * @summary Validate a passport document via dtkyc
+     * @request POST:/user/document/validate-passport
      * @secure
      */
-    uploadUserDocuments: (
-      documents: DtoPartnerApiUploadUserDocsRequest,
+    validateAPassportDocumentViaDtkyc: (
+      document: DtoPartnerApiValidatePassportRequest,
       params: RequestParams = {},
     ) =>
-      this.http.request<DtoOkResponse, any>({
-        path: `/user/document/upload`,
+      this.http.request<DtkycPassportValidationResult, any>({
+        path: `/user/document/validate-passport`,
         method: "POST",
-        body: documents,
+        body: document,
         secure: true,
         type: ContentType.Json,
         format: "json",
@@ -803,18 +811,17 @@ export class Api<SecurityDataType extends unknown> {
      * No description
      *
      * @tags engine-partner-api
-     * @name UpdateAPartnerUser
-     * @summary Update a partner user
-     * @request POST:/user/update/{userId}
+     * @name ResubmitUserKyc
+     * @summary Resubmit user kyc
+     * @request POST:/user/resubmit
      * @secure
      */
-    updateAPartnerUser: (
-      userId: string,
+    resubmitUserKyc: (
       user: DtoPartnerApiUpdateUserRequest,
       params: RequestParams = {},
     ) =>
       this.http.request<ModelUser, any>({
-        path: `/user/update/${userId}`,
+        path: `/user/resubmit`,
         method: "POST",
         body: user,
         secure: true,
