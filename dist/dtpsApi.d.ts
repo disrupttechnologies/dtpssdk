@@ -22,6 +22,7 @@ export interface DtkycPassportValidationResult {
     dob?: string;
     expiryDate?: string;
     firstName?: string;
+    issueDate?: string;
     lastName?: string;
     message?: string;
     nationality?: string;
@@ -173,9 +174,13 @@ export interface ModelUser {
     updatedAt?: string;
 }
 export interface RepositoryCPADetailsPayload {
-    failed?: string[];
+    failed?: RepositoryCPAFailed[];
     pending?: string[];
     success?: RepositoryCPASuccess[];
+}
+export interface RepositoryCPAFailed {
+    applicationId?: string;
+    errorCodes?: string[];
 }
 export interface RepositoryCPASuccess {
     accountNumber?: string;
