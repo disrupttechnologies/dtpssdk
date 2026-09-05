@@ -261,6 +261,18 @@ export declare class Api<SecurityDataType extends unknown> {
          */
         activateReplacementCard: (card: DtoPartnerApiReplacementCardActivateRequest, params?: RequestParams) => Promise<AxiosResponse<DtoOkResponse, any>>;
         /**
+         * @description GetCardActivationDetails
+         *
+         * @tags engine-partner-api
+         * @name GetCardActivationDetails
+         * @summary GetCardActivationDetails
+         * @request GET:/card/activation/details
+         */
+        getCardActivationDetails: (query?: {
+            /** Comma-separated card activation ids */
+            ids?: string;
+        }, params?: RequestParams) => Promise<AxiosResponse<Record<string, string>, any>>;
+        /**
          * @description Apply Card
          *
          * @tags engine-partner-api

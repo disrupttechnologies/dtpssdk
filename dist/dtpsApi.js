@@ -175,6 +175,22 @@ export class Api {
             ...params,
         }),
         /**
+         * @description GetCardActivationDetails
+         *
+         * @tags engine-partner-api
+         * @name GetCardActivationDetails
+         * @summary GetCardActivationDetails
+         * @request GET:/card/activation/details
+         */
+        getCardActivationDetails: (query, params = {}) => this.http.request({
+            path: `/card/activation/details`,
+            method: "GET",
+            query: query,
+            type: ContentType.Json,
+            format: "json",
+            ...params,
+        }),
+        /**
          * @description Apply Card
          *
          * @tags engine-partner-api
