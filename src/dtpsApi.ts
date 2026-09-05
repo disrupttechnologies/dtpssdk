@@ -458,6 +458,30 @@ export class Api<SecurityDataType extends unknown> {
       }),
 
     /**
+     * @description GetCardActivationDetails
+     *
+     * @tags engine-partner-api
+     * @name GetCardActivationDetails
+     * @summary GetCardActivationDetails
+     * @request GET:/card/activation/details
+     */
+    getCardActivationDetails: (
+      query?: {
+        /** Comma-separated card activation ids */
+        ids?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<Record<string, string>, any>({
+        path: `/card/activation/details`,
+        method: "GET",
+        query: query,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
      * @description Apply Card
      *
      * @tags engine-partner-api
