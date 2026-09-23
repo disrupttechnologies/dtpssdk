@@ -224,6 +224,11 @@ export interface RepositoryCPASuccess {
   ucid?: string;
 }
 
+export interface RepositoryCardActivationDetail {
+  isPinSet?: boolean;
+  status?: string;
+}
+
 import type {
   AxiosInstance,
   AxiosRequestConfig,
@@ -472,7 +477,7 @@ export class Api<SecurityDataType extends unknown> {
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<Record<string, string>, any>({
+      this.http.request<Record<string, RepositoryCardActivationDetail>, any>({
         path: `/card/activation/details`,
         method: "GET",
         query: query,

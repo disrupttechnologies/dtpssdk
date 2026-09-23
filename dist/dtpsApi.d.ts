@@ -188,6 +188,10 @@ export interface RepositoryCPASuccess {
     cardNumber?: string;
     ucid?: string;
 }
+export interface RepositoryCardActivationDetail {
+    isPinSet?: boolean;
+    status?: string;
+}
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, ResponseType } from "axios";
 export type QueryParamsType = Record<string | number, any>;
 export interface FullRequestParams extends Omit<AxiosRequestConfig, "data" | "params" | "url" | "responseType"> {
@@ -271,7 +275,7 @@ export declare class Api<SecurityDataType extends unknown> {
         getCardActivationDetails: (query?: {
             /** Comma-separated card activation ids */
             ids?: string;
-        }, params?: RequestParams) => Promise<AxiosResponse<Record<string, string>, any>>;
+        }, params?: RequestParams) => Promise<AxiosResponse<Record<string, RepositoryCardActivationDetail>, any>>;
         /**
          * @description Apply Card
          *
